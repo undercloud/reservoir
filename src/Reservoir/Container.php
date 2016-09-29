@@ -180,6 +180,7 @@ class Container
             $singleton = $ps->singletones[$key];
             $instance = $this->resolve($singleton, $additional);
             $ps->instances[$key] = $instance;
+            // todo: gc singletones
 
             return $instance;
         } else {
