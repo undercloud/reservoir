@@ -1,5 +1,5 @@
 <?php
-namespace Reservoir\Di;
+namespace Reservoir;
 
 use Closure;
 use ReflectionClass;
@@ -7,15 +7,31 @@ use ReflectionFunction;
 use ReflectionParameter;
 use ReflectionException;
 
+/**
+ * Reflection API
+ */
 class Reflector
 {
+    /**
+     * @var Reservoir\Container
+     */
     protected $container;
 
+    /**
+     * @param Container $container instance
+     */
     public function __construct(Container $container)
     {
         $this->container = $container;
     }
 
+    /**
+     * Resolve context
+     *
+     * @param ReflectionParameter $parameter instance
+     *
+     * @return mixed
+     */
     private function buildContext(ReflectionParameter $parameter)
     {
         $parameterClass = $parameter->getClass();
@@ -29,6 +45,14 @@ class Reflector
         return $abstract;
     }
 
+    /**
+     * Check binded context
+     *
+     * @param mixed               $context   context
+     * @param ReflectionParameter $parameter instance
+     *
+     * @return bool
+     */
     private function checkContext($context, ReflectionParameter $parameter)
     {
         $abstract = $this->buildContext($parameter);
@@ -36,6 +60,14 @@ class Reflector
         return $this->container->isOverriden($context, $abstract);
     }
 
+    /**
+     * Return binded context
+     *
+     * @param mixed               $context   context
+     * @param ReflectionParameter $parameter instance
+     *
+     * @return mixed
+     */
     private function getContext($context, ReflectionParameter $parameter)
     {
         $abstract = $this->buildContext($parameter);
@@ -43,6 +75,15 @@ class Reflector
         return $this->container->getOverride($context, $abstract);
     }
 
+    /**
+     * Build arguments list
+     *
+     * @param mixed $context    context
+     * @param array $parameters list
+     * @param array $additional parameters
+     *
+     * @return array
+     */
     public function buildArguments($context, array $parameters, array $additional)
     {
         $callParameters = [];
@@ -75,6 +116,14 @@ class Reflector
         return $callParameters;
     }
 
+    /**
+     * Retrieve closure from method
+     *
+     * @param mixed  $instance instance
+     * @param string $method   name
+     *
+     * @return Closure
+     */
     public function packClosure($instance, $method)
     {
         return (
@@ -84,6 +133,14 @@ class Reflector
         );
     }
 
+    /**
+     * Resolve given key
+     *
+     * @param string $key        key
+     * @param array  $additional parameters
+     *
+     * @return mixed
+     */
     public function reflect($key, array $additional = [])
     {
         try {

@@ -1,5 +1,5 @@
 <?php
-namespace Reservoir\Di;
+namespace Reservoir;
 
 use Closure;
 use ReflectionClass;
@@ -7,9 +7,19 @@ use ReflectionException;
 
 class Container
 {
+    /**
+     * @var Reservoir\Reflector
+     */
     protected $reflector;
+
+    /**
+     * @var Reservoir\PersistentStorage
+     */
     protected $persistentStorage;
 
+    /**
+     * Initialize instance
+     */
     public function __construct()
     {
         $this->reflector = new Reflector($this);
@@ -29,6 +39,14 @@ class Container
         return $this->make($entity, $additional);
     }
 
+    /**
+     * Check key exists
+     *
+     * @param string $key key
+     * @throws Reservoir\ContainerEception
+     *
+     * @return bool
+     */
     private function check($key)
     {
         if ($this->has($key)) {
@@ -38,6 +56,11 @@ class Container
         }
     }
 
+    /**
+     * Return list of avail keys
+     *
+     * @return array
+     */
     public function keys()
     {
         return $this->persistentStorage->keys();
@@ -125,14 +148,14 @@ class Container
     {
         $thisis = $this;
         $args = func_get_args();
-        $callback = function($key) use ($thisis) {
+        $callback = function ($key) use ($thisis) {
             return $thisis->make($key);
         };
 
         return array_map($callback, $args);
     }
 
-    public function make($key, array $additional = array())
+    public function make($key, array $additional = [])
     {
         if (is_array($key) or $key instanceof Closure) {
             return $this->reflector->reflect($key, $additional);

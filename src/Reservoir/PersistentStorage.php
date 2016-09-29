@@ -1,16 +1,38 @@
 <?php
-namespace Reservoir\Di;
+namespace Reservoir;
 
+/**
+ * HashMap key-value storage
+ */
 class PersistentStorage
 {
+    /**
+     * @var array
+     */
     protected static $storage = [];
+
+    /**
+     * @var array
+     */
     protected static $watch = ['aliases','instances','registry','singletones'];
 
+    /**
+     * Check if key exists
+     *
+     * @param string $key key
+     *
+     * @return boolean
+     */
     public function has($key)
     {
         return in_array($key, $this->keys(), true);
     }
 
+    /**
+     * Return all keys
+     *
+     * @return array
+     */
     public function keys()
     {
         $keys = [];
@@ -23,6 +45,14 @@ class PersistentStorage
         return $keys;
     }
 
+    /**
+     * Remove storage value by key
+     * Return true if value is deleted, otherwise return false
+     *
+     * @param string $key key
+     *
+     * @return boolean
+     */
     public function forget($key)
     {
         foreach (self::$storage as $index => $value) {
@@ -38,6 +68,13 @@ class PersistentStorage
         return false;
     }
 
+    /**
+     * Return source reference
+     *
+     * @param string $key key
+     *
+     * @return Reservoir\HashMap
+     */
     public function getSourceReference($key)
     {
         foreach (self::$storage as $index => $value) {
@@ -49,11 +86,23 @@ class PersistentStorage
         }
     }
 
+    /**
+     * Clear storage
+     *
+     * @return void
+     */
     public function flush()
     {
         self::$storage = [];
     }
 
+    /**
+     * Magic __get
+     *
+     * @param string $key key
+     *
+     * @return mixed
+     */
     public function __get($key)
     {
         if (!isset(self::$storage[$key])) {

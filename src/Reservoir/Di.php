@@ -1,26 +1,54 @@
 <?php
-namespace Reservoir\Di;
+namespace Reservoir;
 
 use Closure;
 use ArrayAccess;
 
+/**
+ * Dependency Injection API
+ */
 class Di extends Container implements ArrayAccess
 {
+    /**
+     * Initialize instance
+     */
     public function __construct()
     {
         parent::__construct();
     }
 
+    /**
+     * ArrayAccess::offsetExists
+     *
+     * @param string $key key
+     *
+     * @return bool
+     */
     public function offsetExists($key)
     {
         return $this->has($key);
     }
 
+    /**
+     * ArrayAccess::offsetGet
+     *
+     * @param string $key key
+     *
+     * @return mixed
+     */
     public function offsetGet($key)
     {
         return $this->make($key);
     }
 
+    /**
+     * ArrayAccess::offsetSet
+     *
+     * @param string $key   key
+     * @param mixed  $value value
+     *
+     * @return null
+     */
     public function offsetSet($key, $value)
     {
         if (null === $key) {
@@ -36,20 +64,43 @@ class Di extends Container implements ArrayAccess
         $this->bind($key, $value);
     }
 
+    /**
+     * ArrayAccess::offsetUnset
+     *
+     * @param string $key key
+     *
+     * @return null
+     */
     public function offsetUnset($key)
     {
         $this->forget($key);
     }
 
+    /**
+     * Initialize context binder
+     *
+     * @param mixed $concrete value
+     *
+     * @return Reservoir\ContextBinder
+     */
     public function when($concrete)
     {
         return new ContextBinder($this, $concrete);
     }
 
+    /**
+     * Build context
+     *
+     * @param string $concrete       value
+     * @param string $needs          value
+     * @param mixed  $implementation value
+     *
+     * @return Reservoir\Di
+     */
     public function context($concrete, $needs, $implementation)
     {
         $context = $this->persistentStorage->context;
-        if(!$context->has($concrete)){
+        if (!$context->has($concrete)) {
             $context[$concrete] = new HashMap;
         }
 
@@ -58,6 +109,14 @@ class Di extends Container implements ArrayAccess
         return $this;
     }
 
+    /**
+     * Check override context
+     *
+     * @param mixed $concrete value
+     * @param mixed $needs    value
+     *
+     * @return boolean
+     */
     public function isOverriden($concrete, $needs)
     {
         return (
@@ -66,6 +125,14 @@ class Di extends Container implements ArrayAccess
         );
     }
 
+    /**
+     * Get override context
+     *
+     * @param mixed $concrete value
+     * @param mixed $needs    value
+     *
+     * @return mixed
+     */
     public function getOverride($concrete, $needs)
     {
         return $this->persistentStorage->context[$concrete][$needs];
