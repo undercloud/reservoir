@@ -9,7 +9,7 @@ class PersistentStorage
     /**
      * @var array
      */
-    protected static $storage = [];
+    protected $storage = [];
 
     /**
      * @var array
@@ -36,7 +36,7 @@ class PersistentStorage
     public function keys()
     {
         $keys = [];
-        foreach (self::$storage as $key => $value) {
+        foreach ($this->storage as $key => $value) {
             if (in_array($key, self::$watch)) {
                 $keys = array_merge($keys, $value->keys());
             }
@@ -55,7 +55,7 @@ class PersistentStorage
      */
     public function forget($key)
     {
-        foreach (self::$storage as $index => $value) {
+        foreach ($this->storage as $index => $value) {
             if (in_array($index, self::$watch)) {
                 if ($value->has($key)) {
                     $value->del($key);
@@ -77,7 +77,7 @@ class PersistentStorage
      */
     public function getSourceReference($key)
     {
-        foreach (self::$storage as $index => $value) {
+        foreach ($this->storage as $index => $value) {
             if (in_array($index, self::$watch)) {
                 if ($value->has($key)) {
                     return $value;
@@ -93,7 +93,7 @@ class PersistentStorage
      */
     public function flush()
     {
-        self::$storage = [];
+        $this->storage = [];
     }
 
     /**
@@ -105,11 +105,11 @@ class PersistentStorage
      */
     public function __get($key)
     {
-        if (!isset(self::$storage[$key])) {
-            self::$storage[$key] = new HashMap;
+        if (!isset($this->storage[$key])) {
+            $this->storage[$key] = new HashMap;
         }
 
-        return self::$storage[$key];
+        return $this->storage[$key];
     }
 }
 ?>

@@ -86,7 +86,7 @@ class Container
         return $this;
     }
 
-    public function singleton($key, $resolver)
+    public function singleton($key, Closure $resolver)
     {
         $this->check($key);
         $this->persistentStorage->singletones[$key] = $resolver;
@@ -94,7 +94,7 @@ class Container
         return $this;
     }
 
-    public function bind($key, $resolver)
+    public function bind($key, Closure $resolver)
     {
         $this->check($key);
         $this->persistentStorage->registry[$key] = $resolver;
@@ -180,7 +180,7 @@ class Container
             $singleton = $ps->singletones[$key];
             $instance = $this->resolve($singleton, $additional);
             $ps->instances[$key] = $instance;
-            // todo: gc singletones
+            $ps->singletones->del($key);
 
             return $instance;
         } else {
