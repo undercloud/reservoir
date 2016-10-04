@@ -12,7 +12,7 @@ class Di extends Container implements ArrayAccess
     /**
      * Initialize instance
      */
-    public function __construct()
+    public function __construct($scope = null)
     {
         parent::__construct();
     }
@@ -136,6 +136,42 @@ class Di extends Container implements ArrayAccess
     public function getOverride($concrete, $needs)
     {
         return $this->persistentStorage->context[$concrete][$needs];
+    }
+
+    private function resolveDeferred($key)
+    {
+        foreach ($this->persistentStorage->deferred as $class => $map) {
+            if (in_array($key, $map['provides'], true)) {
+                $this->invokeRegister($map['instance']);
+                $this->persistentStorage->deferred->del($class);
+            }
+        }
+    }
+
+    private function invokeRegister($instance)
+    {
+        call_user_func([$instance,'register'], $this);
+    }
+
+    public function register($instance)
+    {
+        if (true === $instance->deferred) {
+            $provides = $instance->provides;
+
+            if ($provides) {
+                if (!is_array($provides)) {
+                    $provides = [$provides];
+                }
+
+                $key = get_class($provider);
+                $this->persistentStorage->deferred[$key] = [
+                    'instance' => $instance,
+                    'provides' => $provides
+                ];
+            }
+        } else {
+            $this->invokeRegister($instance);
+        }
     }
 }
 ?>
