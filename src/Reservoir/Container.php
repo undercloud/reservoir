@@ -144,6 +144,42 @@ class Container
         return $this->persistentStorage->flush();
     }
 
+    private function resolveDeferred($key)
+    {
+        foreach ($this->persistentStorage->deferred as $class => $map) {
+            if (in_array($key, $map['provides'], true)) {
+                $this->invokeRegister($map['instance']);
+                $this->persistentStorage->deferred->del($class);
+            }
+        }
+    }
+
+    private function invokeRegister(ServiceProvider $instance)
+    {
+        call_user_func([$instance,'register'], $this);
+    }
+
+    public function register(ServiceProvider $instance)
+    {
+        if (true === $instance->deferred) {
+            $provides = $instance->provides;
+
+            if ($provides) {
+                if (!is_array($provides)) {
+                    $provides = [$provides];
+                }
+
+                $key = get_class($instance);
+                $this->persistentStorage->deferred[$key] = [
+                    'instance' => $instance,
+                    'provides' => $provides
+                ];
+            }
+        } else {
+            $this->invokeRegister($instance);
+        }
+    }
+
     public function makes()
     {
         $thisis = $this;
@@ -163,9 +199,11 @@ class Container
 
         $ps = $this->persistentStorage;
 
-        if ($this-> isAlias($key)) {
+        if ($this->isAlias($key)) {
             $key = $ps->aliases[$key];
         }
+
+        $this->resolveDeferred($key);
 
         if ($ps->instances->has($key)) {
             return $ps->instances[$key];
