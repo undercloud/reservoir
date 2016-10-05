@@ -7,12 +7,12 @@ namespace Reservoir;
 class PersistentStorage
 {
     /**
-     * @var array
+     * @var array Reservoir\HashMap instances
      */
     protected $storage = [];
 
     /**
-     * @var array
+     * @var array watch keys
      */
     protected static $watch = ['aliases','instances','registry','singletones'];
 

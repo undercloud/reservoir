@@ -13,7 +13,7 @@ use ReflectionException;
 class Reflector
 {
     /**
-     * @var Reservoir\Container
+     * @var Reservoir\Container instance
      */
     protected $container;
 
@@ -51,7 +51,7 @@ class Reflector
      * @param mixed               $context   context
      * @param ReflectionParameter $parameter instance
      *
-     * @return bool
+     * @return boolean
      */
     private function checkContext($context, ReflectionParameter $parameter)
     {

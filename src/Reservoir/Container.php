@@ -5,6 +5,9 @@ use Closure;
 use ReflectionClass;
 use ReflectionException;
 
+/**
+ * Container API
+ */
 class Container
 {
     /**
@@ -26,6 +29,15 @@ class Container
         $this->persistentStorage = new PersistentStorage;
     }
 
+    /**
+     * Helper for resolve container value
+     *
+     * @param mixed   $entity     value
+     * @param array   $additional params
+     * @param boolean $raw        is raw value
+     *
+     * @return mixed
+     */
     private function resolve($entity, array $additional = [], $raw = false)
     {
         if ($entity instanceof Closure) {
@@ -40,12 +52,12 @@ class Container
     }
 
     /**
-     * Check key exists
+     * Prevent adding duplicate keys
      *
      * @param string $key key
      * @throws Reservoir\ContainerEception
      *
-     * @return bool
+     * @return boolean
      */
     private function check($key)
     {
@@ -66,17 +78,24 @@ class Container
         return $this->persistentStorage->keys();
     }
 
+    /**
+     * Check key exists
+     *
+     * @param strign $key container key
+     *
+     * @return boolean
+     */
     public function has($key)
     {
         return $this->persistentStorage->has($key);
     }
 
     /**
-     * [instance description]
+     * Register instance
      *
-     * @param  string               $key      [description]
-     * @param  mixed                $resolver [description]
-     * @return Olifant\Di\Container           [description]
+     * @param  string $key      name
+     * @param  mixed  $resolver instance
+     * @return self
      */
     public function instance($key, $resolver)
     {
@@ -86,6 +105,14 @@ class Container
         return $this;
     }
 
+    /**
+     * Register singleton
+     *
+     * @param strign  $key      name
+     * @param Closure $resolver callback
+     *
+     * @return self
+     */
     public function singleton($key, Closure $resolver)
     {
         $this->check($key);
@@ -94,6 +121,14 @@ class Container
         return $this;
     }
 
+    /**
+     * Register factory
+     *
+     * @param string  $key      name
+     * @param Closure $resolver callback
+     *
+     * @return self
+     */
     public function bind($key, Closure $resolver)
     {
         $this->check($key);
@@ -102,6 +137,14 @@ class Container
         return $this;
     }
 
+    /**
+     * Create alias for container key
+     *
+     * @param string alias name
+     * @param string container key
+     *
+     * @return self
+     */
     public function alias($alias, $abstract)
     {
         $this->check($key);
@@ -110,11 +153,27 @@ class Container
         return $this;
     }
 
+    /**
+     * Check if alias exists
+     *
+     * @param string $key alias
+     *
+     * @return boolean
+     */
     public function isAlias($key)
     {
         return $this->persistentStorage->aliases->has($key);
     }
 
+    /**
+     * Extends existed container value
+     *
+     * @param string $key   name
+     * @param mixed  $value new value
+     * @throws Reservoir\ContainerException
+     *
+     * @return self
+     */
     public function decorator($key, $value)
     {
         if (!$this->has($key)) {
@@ -132,18 +191,39 @@ class Container
         $reference = $this->persistentStorage->getSourceReference($key);
 
         $reference[$key] = $value($reference[$key], $this);
+
+        return $this;
     }
 
+    /**
+     * Remove container value by key
+     *
+     * @param string $key for delete
+     *
+     * @return bool
+     */
     public function forget($key)
     {
         return $this->persistentStorage->forget($key);
     }
 
+    /**
+     * Clear container
+     *
+     * @return null
+     */
     public function flush()
     {
         return $this->persistentStorage->flush();
     }
 
+    /**
+     * Register deferred services
+     *
+     * @param string $key name
+     *
+     * @return null
+     */
     private function resolveDeferred($key)
     {
         foreach ($this->persistentStorage->deferred as $class => $map) {
@@ -154,11 +234,25 @@ class Container
         }
     }
 
+    /**
+     * Register service
+     *
+     * @param ServiceProvide $instance value
+     *
+     * @return null
+     */
     private function invokeRegister(ServiceProvider $instance)
     {
         call_user_func([$instance,'register'], $this);
     }
 
+    /**
+     * Register service logic
+     *
+     * @param ServiceProvide $instance value
+     *
+     * @return null
+     */
     public function register(ServiceProvider $instance)
     {
         if (true === $instance->deferred) {
@@ -180,6 +274,13 @@ class Container
         }
     }
 
+    /**
+     * Return list of requested services
+     *
+     * @param mixed $keys,... services list
+     *
+     * @return array
+     */
     public function makes()
     {
         $thisis = $this;
@@ -191,6 +292,14 @@ class Container
         return array_map($callback, $args);
     }
 
+    /**
+     * Retrieve service by key
+     *
+     * @param string $key        name
+     * @param array  $additional parameters
+     *
+     * @return mixed
+     */
     public function make($key, array $additional = [])
     {
         if (is_array($key) or $key instanceof Closure) {

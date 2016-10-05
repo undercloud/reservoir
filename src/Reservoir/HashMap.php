@@ -12,14 +12,14 @@ use IteratorAggregate;
 class HashMap implements ArrayAccess, IteratorAggregate, Countable
 {
     /**
-     * @var array
+     * @var array container
      */
     protected $hashMap = [];
 
     /**
-     * [__construct description]
+     * Initialize instance
      *
-     * @param array $array [description]
+     * @param array $array predefined values
      */
     public function __construct(array $array = [])
     {
@@ -128,7 +128,7 @@ class HashMap implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * @see HashMap::has
+     * @see Reservoir\HashMap::has
      */
     public function offsetExists($offset)
     {
@@ -136,7 +136,7 @@ class HashMap implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * @see HashMap::get
+     * @see Reservoir\HashMap::get
      */
     public function offsetGet($offset)
     {
@@ -144,7 +144,7 @@ class HashMap implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * @see HashMap::set
+     * @see Reservoir\HashMap::set
      */
     public function offsetSet($offset, $value)
     {
@@ -152,7 +152,7 @@ class HashMap implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * @see HashMap::del
+     * @see Reservoir\HashMap::del
      */
     public function offsetUnset($offset)
     {

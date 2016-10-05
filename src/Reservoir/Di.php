@@ -12,7 +12,7 @@ class Di extends Container implements ArrayAccess
     /**
      * Initialize instance
      */
-    public function __construct($scope = null)
+    public function __construct()
     {
         parent::__construct();
     }
@@ -22,7 +22,7 @@ class Di extends Container implements ArrayAccess
      *
      * @param string $key key
      *
-     * @return bool
+     * @return boolean
      */
     public function offsetExists($key)
     {

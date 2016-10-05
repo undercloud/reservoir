@@ -7,7 +7,7 @@ namespace Reservoir;
 class ContextBinder
 {
     /**
-     * @var Reservoir\Container
+     * @var Reservoir\Container instance
      */
     protected $container;
 

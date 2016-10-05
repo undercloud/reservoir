@@ -1,11 +1,27 @@
 <?php
 namespace Reservoir;
-
+/**
+ * Service provider base class
+ */
 abstract class ServiceProvider
 {
-	public $provides;
-	public $deferred = false;
+    /**
+     * @var string|array list of deferred providers
+     */
+    public $provides;
 
-	abstract public function register($app);
+    /**
+     * @var boolean is service deferred
+     */
+    public $deferred = false;
+
+    /**
+     * Register service provider
+     *
+     * @param mixed $app application instance
+     *
+     * @return null
+     */
+    abstract public function register($app);
 }
 ?>
