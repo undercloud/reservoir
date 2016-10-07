@@ -169,7 +169,7 @@ class Container
      */
     public function alias($alias, $abstract)
     {
-        $this->check($key);
+        $this->check($alias);
         $this->persistentStorage->aliases[$alias] = $abstract;
 
         return $this;
