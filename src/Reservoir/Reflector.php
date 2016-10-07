@@ -9,6 +9,12 @@ use ReflectionException;
 
 /**
  * Reflection API
+ *
+ * @category IoC\DI
+ * @package  Reservoir
+ * @author   undercloud <lodashes@gmail.com>
+ * @license  https://opensource.org/licenses/MIT MIT
+ * @link     http://github.com/undercloud/reservoir
  */
 class Reflector
 {
@@ -18,6 +24,8 @@ class Reflector
     protected $container;
 
     /**
+     * Initialize instance
+     *
      * @param Container $container instance
      */
     public function __construct(Container $container)

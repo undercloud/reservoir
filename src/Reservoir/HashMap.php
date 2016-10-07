@@ -8,6 +8,12 @@ use IteratorAggregate;
 
 /**
  * Key-value storage like  Java HashMap
+ *
+ * @category IoC\DI
+ * @package  Reservoir
+ * @author   undercloud <lodashes@gmail.com>
+ * @license  https://opensource.org/licenses/MIT MIT
+ * @link     http://github.com/undercloud/reservoir
  */
 class HashMap implements ArrayAccess, IteratorAggregate, Countable
 {
@@ -129,6 +135,8 @@ class HashMap implements ArrayAccess, IteratorAggregate, Countable
 
     /**
      * @see Reservoir\HashMap::has
+     *
+     * @return boolean
      */
     public function offsetExists($offset)
     {
@@ -137,6 +145,8 @@ class HashMap implements ArrayAccess, IteratorAggregate, Countable
 
     /**
      * @see Reservoir\HashMap::get
+     *
+     * @return mixed
      */
     public function offsetGet($offset)
     {
@@ -145,6 +155,8 @@ class HashMap implements ArrayAccess, IteratorAggregate, Countable
 
     /**
      * @see Reservoir\HashMap::set
+     *
+     * @return null
      */
     public function offsetSet($offset, $value)
     {
@@ -153,6 +165,8 @@ class HashMap implements ArrayAccess, IteratorAggregate, Countable
 
     /**
      * @see Reservoir\HashMap::del
+     *
+     * @return null
      */
     public function offsetUnset($offset)
     {

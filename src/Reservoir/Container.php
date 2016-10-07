@@ -7,6 +7,12 @@ use ReflectionException;
 
 /**
  * Container API
+ *
+ * @category IoC\DI
+ * @package  Reservoir
+ * @author   undercloud <lodashes@gmail.com>
+ * @license  https://opensource.org/licenses/MIT MIT
+ * @link     http://github.com/undercloud/reservoir
  */
 class Container
 {
@@ -55,6 +61,7 @@ class Container
      * Prevent adding duplicate keys
      *
      * @param string $key key
+     *
      * @throws Reservoir\ContainerEception
      *
      * @return boolean
@@ -81,7 +88,7 @@ class Container
     /**
      * Check key exists
      *
-     * @param strign $key container key
+     * @param string $key container key
      *
      * @return boolean
      */
@@ -93,8 +100,9 @@ class Container
     /**
      * Register instance
      *
-     * @param  string $key      name
-     * @param  mixed  $resolver instance
+     * @param string $key      name
+     * @param mixed  $resolver instance
+     *
      * @return self
      */
     public function instance($key, $resolver)
@@ -108,13 +116,20 @@ class Container
     /**
      * Register singleton
      *
-     * @param strign  $key      name
-     * @param Closure $resolver callback
+     * @param string         $key      name
+     * @param string|Closure $resolver callback
      *
      * @return self
      */
-    public function singleton($key, Closure $resolver)
+    public function singleton($key, $resolver)
     {
+        if (!is_string($resolver) and !($resolver instanceof Closure)) {
+            throw new ContainerException(sprintf(
+                'Argument 2 must be string or Closure, %s given',
+                gettype($resolver)
+            ));
+        }
+
         $this->check($key);
         $this->persistentStorage->singletones[$key] = $resolver;
 
@@ -124,13 +139,20 @@ class Container
     /**
      * Register factory
      *
-     * @param string  $key      name
-     * @param Closure $resolver callback
+     * @param string         $key      name
+     * @param string|Closure $resolver callback
      *
      * @return self
      */
-    public function bind($key, Closure $resolver)
+    public function bind($key, $resolver)
     {
+        if (!is_string($resolver) and !($resolver instanceof Closure)) {
+            throw new ContainerException(sprintf(
+                'Argument 2 must be string or Closure, %s given',
+                gettype($resolver)
+            ));
+        }
+
         $this->check($key);
         $this->persistentStorage->registry[$key] = $resolver;
 
@@ -140,8 +162,8 @@ class Container
     /**
      * Create alias for container key
      *
-     * @param string alias name
-     * @param string container key
+     * @param string $alias    name
+     * @param string $abstract key
      *
      * @return self
      */
@@ -170,6 +192,7 @@ class Container
      *
      * @param string $key   name
      * @param mixed  $value new value
+     *
      * @throws Reservoir\ContainerException
      *
      * @return self
@@ -243,7 +266,7 @@ class Container
      */
     private function invokeRegister(ServiceProvider $instance)
     {
-        call_user_func([$instance,'register'], $this);
+        call_user_func([$instance, 'register'], $this);
     }
 
     /**
