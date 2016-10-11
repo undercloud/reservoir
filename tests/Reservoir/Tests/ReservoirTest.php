@@ -145,4 +145,61 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
         unset($this->di['foo']);
         $this->assertEquals(false, isset($this->di['foo']));
     }
+
+    public function testReflection()
+    {
+        require_once __DIR__ . '/Foo.php';
+        require_once __DIR__ . '/Baz.php';
+        require_once __DIR__ . '/Quux.php';
+
+        $fn = function(\Baz $baz) {
+            return $baz->getFoo();
+        };
+
+        $baz = $this->di->make('Baz');
+
+        $this->assertEquals(true, $baz instanceof \Baz);
+        $this->assertEquals(true, $baz->getFoo() instanceof \Foo);
+        $this->assertEquals(true, $this->di->make([$baz,'quux']) instanceof \Quux);
+        $this->assertEquals(true, $this->di->make('Baz::quux') instanceof \Quux);
+        $this->assertEquals(true, $this->di->make($fn) instanceof \Foo);
+    }
+
+
+    public function testContext()
+    {
+        $date = '2007-05-25';
+        $ts   = 1180033200;
+
+        $this->di->when('DateTime')
+                 ->needs('$time')
+                 ->give($date);
+
+
+        $this->assertEquals($ts, $this->di->make('DateTime')->getTimestamp());
+        $this->assertEquals($date, $this->di->make('DateTime')->format('Y-m-d'));
+
+        require_once __DIR__ . '/Bar.php';
+        require_once __DIR__ . '/Foo.php';
+        require_once __DIR__ . '/Bat.php';
+
+        $this->di->when('Bat')
+                 ->needs('Bar')
+                 ->give('Foo');
+
+        $this->assertEquals(true, $this->di->make('Bat')->getBar() instanceof \Foo);
+    }
+
+    public function testAdditional()
+    {
+        $date = '2007-05-25';
+        $ts   = 1180033200;
+
+        $dateTime = $this->di->make('DateTime', [
+            'time' => $date
+        ]);
+
+        $this->assertEquals($ts, $dateTime->getTimestamp());
+        $this->assertEquals($date, $dateTime->format('Y-m-d'));
+    }
 }

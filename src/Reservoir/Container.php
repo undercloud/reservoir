@@ -44,7 +44,7 @@ class Container
      *
      * @return mixed
      */
-    private function resolve($entity, array $additional = [], $raw = false)
+    public function resolve($entity, array $additional = [], $raw = false)
     {
         if ($entity instanceof Closure) {
             return $this->reflector->reflect($entity, $additional);
@@ -103,6 +103,8 @@ class Container
      * @param string $key      name
      * @param mixed  $resolver instance
      *
+     * @throws ContainerException
+     *
      * @return self
      */
     public function instance($key, $resolver)
@@ -118,6 +120,8 @@ class Container
      *
      * @param string         $key      name
      * @param string|Closure $resolver callback
+     *
+     * @throws ContainerException
      *
      * @return self
      */

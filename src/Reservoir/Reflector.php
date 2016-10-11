@@ -46,8 +46,7 @@ class Reflector
         if ($parameterClass) {
             $abstract = $parameterClass->getName();
         } else {
-            $parameterName = $parameter->getName();
-            $abstract = '$' . $parameterName;
+            $abstract = '$' . $parameter->getName();
         }
 
         return $abstract;
