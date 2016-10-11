@@ -262,6 +262,22 @@ class Container
     }
 
     /**
+     * Resolve concrete value
+     *
+     * @param mixed $mixed entity
+     *
+     * @return mixed
+     */
+    public function invokeSelf($mixed)
+    {
+        if ($mixed instanceof Closure) {
+            return call_user_func($mixed, $this);
+        }
+
+        return $mixed;
+    }
+
+    /**
      * Register service
      *
      * @param ServiceProvide $instance value
@@ -347,12 +363,12 @@ class Container
 
         if ($ps->registry->has($key)) {
             $registry = $ps->registry[$key];
-            $instance = $this->resolve($registry, $additional);
+            $instance = $this->invokeSelf($registry);
 
             return $instance;
         } else if ($ps->singletones->has($key)) {
             $singleton = $ps->singletones[$key];
-            $instance = $this->resolve($singleton, $additional);
+            $instance = $this->invokeSelf($singleton);
             $ps->instances[$key] = $instance;
             $ps->singletones->del($key);
 
