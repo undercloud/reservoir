@@ -30,10 +30,7 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(true, $this->di->forget('bar'));
         $this->assertEquals(['foo','baz'],$this->di->keys());
 
-        $this->assertEquals(
-            $this->di->make('foo'),
-            'bar'
-        );
+        $this->assertEquals($this->di->make('foo'),'bar');
 
         $this->di->flush();
 
@@ -52,10 +49,13 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
         require_once __DIR__ . '/Foo.php';
 
         $this->di->bind('Bar', 'Foo');
+        $this->assertEquals('Foo', get_class($this->di->make('Bar')));
+        $this->di->forget('Bar');
 
-        $this->assertEquals('Foo', $this->di->make(function(\Bar $bar){
-            return get_class($bar);
-        }));
+        $this->di->bind('Bar', function($di){
+            return $di->make('Foo');
+        });
+        $this->assertEquals('Foo', get_class($this->di->make('Bar')));
     }
 
     public function testSingleton()
@@ -87,7 +87,7 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
         $di->instance('y', 2);
         $di->instance('z', 3);
 
-        $di->bind('foo', function() use ($di) {
+        $di->bind('foo', function($di) {
             return (
                 $di->make('x') * $di->make('y') / $di->make('z')
             );
@@ -165,7 +165,6 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(true, $this->di->make($fn) instanceof \Foo);
     }
 
-
     public function testContext()
     {
         $date = '2007-05-25';
@@ -185,7 +184,9 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
 
         $this->di->when('Bat')
                  ->needs('Bar')
-                 ->give('Foo');
+                 ->give(function($di){
+                    return $di->make('Foo');
+                });
 
         $this->assertEquals(true, $this->di->make('Bat')->getBar() instanceof \Foo);
     }
@@ -201,5 +202,12 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($ts, $dateTime->getTimestamp());
         $this->assertEquals($date, $dateTime->format('Y-m-d'));
+
+
+    }
+
+    public function testService()
+    {
+
     }
 }

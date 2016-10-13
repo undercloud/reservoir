@@ -104,7 +104,11 @@ class Reflector
 
                 if ($hasContext) {
                     $concreteContext = $this->getContext($context, $parameter);
-                    $callParameters[] = $this->container->invokeSelf($concreteContext);
+                    $callParameters[] = $this->container->resolve(
+                        $concreteContext,
+                        [],
+                        $parameter->getClass() ? false : true
+                    );
                 } else if ($parameter->getClass()) {
                     $classname = $parameter->getClass()->getName();
                     $callParameters[] = $this->container->make($classname);

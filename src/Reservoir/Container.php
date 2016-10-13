@@ -47,14 +47,10 @@ class Container
     public function resolve($entity, array $additional = [], $raw = false)
     {
         if ($entity instanceof Closure) {
-            return $this->reflector->reflect($entity, $additional);
+            return call_user_func($entity, $this);
         }
 
-        if ($raw) {
-            return $entity;
-        }
-
-        return $this->make($entity, $additional);
+        return $raw ? $entity : $this->make($entity, $additional);
     }
 
     /**
@@ -262,22 +258,6 @@ class Container
     }
 
     /**
-     * Resolve concrete value
-     *
-     * @param mixed $mixed entity
-     *
-     * @return mixed
-     */
-    public function invokeSelf($mixed)
-    {
-        if ($mixed instanceof Closure) {
-            return call_user_func($mixed, $this);
-        }
-
-        return $mixed;
-    }
-
-    /**
      * Register service
      *
      * @param ServiceProvide $instance value
@@ -363,12 +343,12 @@ class Container
 
         if ($ps->registry->has($key)) {
             $registry = $ps->registry[$key];
-            $instance = $this->invokeSelf($registry);
+            $instance = $this->resolve($registry, $additional);
 
             return $instance;
         } else if ($ps->singletones->has($key)) {
             $singleton = $ps->singletones[$key];
-            $instance = $this->invokeSelf($singleton);
+            $instance = $this->resolve($singleton, $additional);
             $ps->instances[$key] = $instance;
             $ps->singletones->del($key);
 
