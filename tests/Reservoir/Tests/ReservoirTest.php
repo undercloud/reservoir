@@ -163,6 +163,14 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(true, $this->di->make([$baz,'quux']) instanceof \Quux);
         $this->assertEquals(true, $this->di->make('Baz::quux') instanceof \Quux);
         $this->assertEquals(true, $this->di->make($fn) instanceof \Foo);
+
+        $foo = new \Foo;
+        $quux = new \Quux;
+
+        $this->di->instance('foo', $foo);
+        $this->di->instance('quux', $quux);
+
+        $this->assertEquals([$foo,$quux], $this->di->makes('foo','quux'));
     }
 
     public function testContext()
@@ -203,11 +211,40 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($ts, $dateTime->getTimestamp());
         $this->assertEquals($date, $dateTime->format('Y-m-d'));
 
+        $fn = function($x, $y) {
+            return $x * $y;
+        };
 
+        $mul = $this->di->make($fn, [
+            'x' => 2,
+            'y' => 3
+        ]);
+
+        $this->assertEquals(6, $mul);
+
+        require_once __DIR__ . '/Foo.php';
+
+        $foo = new \Foo;
+
+        $baz = $this->di->make('Baz', [
+            'foo' => $foo,
+        ]);
+
+        $this->assertEquals($foo, $baz->getFoo());
     }
 
     public function testService()
     {
+        require_once __DIR__ . '/../../../src/Reservoir/ServiceProvider.php';
+        require_once __DIR__ . '/Service.php';
+        require_once __DIR__ . '/DeferredService.php';
 
+        $this->di->register(new \Service);
+        $this->di->register(new \DeferredService);
+
+        $this->assertEquals(true,$this->di->make('xfoo') instanceof \Foo);
+
+        $this->assertEquals(false, $this->di->has('xbaz'));
+        $this->assertEquals(true,$this->di->make('xbaz') instanceof \Baz);
     }
 }
