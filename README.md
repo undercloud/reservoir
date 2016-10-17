@@ -5,13 +5,13 @@
 ##usage
 
 ###instance
-```
+```PHP
 $di->instance('foo', new Bar);
 ```
 
 ###singleton
-```
-$di->singleton('db', function($di){
+```PHP
+$di->singleton('db', function($di) {
     return new DataBase(
         $di->make('settings')->name,
         $di->make('settings')->user,
@@ -21,8 +21,8 @@ $di->singleton('db', function($di){
 ```
 
 ###bind
-```
-$di->singleton('database', function($di){
+```PHP
+$di->singleton('database', function($di) {
     return new Factory(
         $di->make('foo'),
         $di->make('bar')
@@ -31,33 +31,41 @@ $di->singleton('database', function($di){
 ```
 
 ###alias
-```
+```PHP
 $di->alias('db', 'database');
 ```
 
 ###isAlias
-```
+```PHP
 // true
 $di->isAlias('db')
 ```
 
 ###decorator
-```
-$di->decorator('db', function($db, $di){
+```PHP
+$di->decorator('db', function($db, $di) {
     $decorator = new Decorator($db);
 
     return $decorator;
 });
 ```
 
-###makes
 ###make
+```PHP
+$di->make('foo');
+```
+###makes
+```PHP
+// [Foo, Bar]
+list($foo, $bar) = $di->makes('foo', 'bar');
+```
 
 ###when
 ###context
 ###isOverriden
 ###getOverride
 
+##Utils
 ###has
 ###keys
 ###forget
