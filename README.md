@@ -67,6 +67,20 @@ list($foo, $bar) = $di->makes('foo', 'bar');
 
 ##Utils
 ###has
+```PHP
+// true
+$di->has('foo')
+```
 ###keys
+```PHP
+// ['foo','bar',...]
+$di->keys()
+```
 ###forget
+```PHP
+$di->forget('foo')
+```
 ###flush
+```PHP
+$di->flush()
+```
