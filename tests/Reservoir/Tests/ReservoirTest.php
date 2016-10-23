@@ -13,6 +13,7 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
     public function __construct()
     {
         error_reporting(-1);
+        date_default_timezone_get('UTC');
         $this->di = new Di;
     }
 
@@ -182,10 +183,6 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
                  ->needs('$time')
                  ->give($date);
 
-        $this->di->when('DateTime')
-                 ->needs('$timezone')
-                 ->give(new \DateTimeZone('UTC'));
-
         $this->assertEquals($ts, $this->di->make('DateTime')->getTimestamp());
         $this->assertEquals($date, $this->di->make('DateTime')->format('Y-m-d'));
 
@@ -208,8 +205,7 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
         $ts   = 1180033200;
 
         $dateTime = $this->di->make('DateTime', [
-            'time' => $date,
-            'timezone' => new \DateTimeZone('UTC')
+            'time' => $date
         ]);
 
         $this->assertEquals($ts, $dateTime->getTimestamp());
