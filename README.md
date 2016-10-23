@@ -1,5 +1,5 @@
 # Reservoir
-
+[![Build Status](https://travis-ci.org/undercloud/reservoir.svg?branch=master)](https://travis-ci.org/undercloud/reservoir)
 ##Installation
 
 ##usage
@@ -67,6 +67,20 @@ list($foo, $bar) = $di->makes('foo', 'bar');
 
 ##Utils
 ###has
+```PHP
+// true
+$di->has('foo')
+```
 ###keys
+```PHP
+// ['foo','bar',...]
+$di->keys()
+```
 ###forget
+```PHP
+$di->forget('foo')
+```
 ###flush
+```PHP
+$di->flush()
+```
