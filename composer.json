@@ -15,7 +15,7 @@
 	},
 	 "autoload": {
       "psr-4": {
-         "Beacon\\": "src/Reservoir/"
+         "Reservoir\\": "src/Reservoir/"
       }
    }
 }
