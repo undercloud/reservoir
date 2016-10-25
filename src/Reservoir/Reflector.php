@@ -125,19 +125,6 @@ class Reflector
     }
 
     /**
-     * Retrieve closure from method
-     *
-     * @param mixed  $instance instance
-     * @param string $method   name
-     *
-     * @return Closure
-     */
-    public function packClosure($instance, $method)
-    {
-        return (new ReflectionMethod($instance, $method))->getClosure($instance);
-    }
-
-    /**
      * Resolve given key
      *
      * @param string $key        key
@@ -150,15 +137,20 @@ class Reflector
         try {
             if (is_array($key)) {
                 list($instance, $method) = $key;
-                $key = $this->packClosure($instance, $method);
+                //$key = $this->packClosure($instance, $method);
 
-                if (!($key instanceof Closure)) {
-                    throw new ContainerException(
-                        'Cannot resolve %s::%s',
-                        (string)get_class($instance),
-                        (string)$method
-                    );
-                }
+                //if (!($key instanceof Closure)) {
+                //    throw new ContainerException(
+                //        'Cannot resolve %s::%s',
+                //        (string)get_class($instance),
+                //        (string)$method
+                //    );
+                //}
+                
+                $parameters = (new ReflectionMethod($instance, $method))->getParameters();
+                $arguments = $this->buildArguments(get_class($instance), $parameters, $additional);
+                
+                return call_user_func_array($key, $arguments);
             }
 
             if ($key instanceof Closure) {
