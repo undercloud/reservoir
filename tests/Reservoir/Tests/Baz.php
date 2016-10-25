@@ -17,5 +17,10 @@ class Baz
     {
         return $quux;
     }
+    
+    public static function staticQuux(Quux $quux)
+    {
+        return $quux;
+    }
 }
 ?>
