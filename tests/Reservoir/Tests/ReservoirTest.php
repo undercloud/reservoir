@@ -147,25 +147,6 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(false, isset($this->di['foo']));
     }
 
-    public function testHHVMFail()
-    {
-        require_once __DIR__ . '/Baz.php';
-        require_once __DIR__ . '/Quux.php';
-
-        $additional = [];
-        $baz = $this->di->make('Baz');
-        $reflector = new \Reservoir\Reflector($this->di);
-        $closure = $reflector->packClosure($baz,'quux');
-        $reflection = new \ReflectionFunction($closure);
-
-        $parameters = $reflection->getParameters();
-        $arguments = $reflector->buildArguments('Closure', $parameters, $additional);
-
-        var_dump($reflection,$parameters,$arguments);
-
-        $this->assertEquals(true,@call_user_func_array($closure, $arguments) instanceof \Quux);
-    }
-
     public function testReflection()
     {
         require_once __DIR__ . '/Foo.php';
@@ -180,7 +161,7 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(true, $baz instanceof \Baz);
         $this->assertEquals(true, $baz->getFoo() instanceof \Foo);
-        //$this->assertEquals(true, $this->di->make([$baz,'quux']) instanceof \Quux);
+        $this->assertEquals(true, $this->di->make([$baz,'quux']) instanceof \Quux);
         $this->assertEquals(true, $this->di->make('Baz::quux') instanceof \Quux);
         $this->assertEquals(true, $this->di->make($fn) instanceof \Foo);
 
