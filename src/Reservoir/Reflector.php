@@ -3,6 +3,7 @@ namespace Reservoir;
 
 use Closure;
 use ReflectionClass;
+use ReflectionMethod;
 use ReflectionFunction;
 use ReflectionParameter;
 use ReflectionException;
@@ -133,11 +134,7 @@ class Reflector
      */
     public function packClosure($instance, $method)
     {
-        return (
-            (new ReflectionClass($instance))
-            ->getMethod($method)
-            ->getClosure($instance)
-        );
+        return (new ReflectionMethod($instance, $method))->getClosure($instance);
     }
 
     /**
