@@ -94,34 +94,32 @@ class Reflector
      */
     public function buildArguments($context, array $parameters, array $additional)
     {
-        $callParameters = [];
+        $callParams = [];
         foreach ($parameters as $parameter) {
             $parameterName = $parameter->getName();
 
             if (array_key_exists($parameterName, $additional)) {
-                $callParameters[] = $additional[$parameterName];
+                $callParams[] = $additional[$parameterName];
             } else {
                 $hasContext = $this->checkContext($context, $parameter);
 
                 if ($hasContext) {
                     $concreteContext = $this->getContext($context, $parameter);
-                    $callParameters[] = $this->container->resolve(
-                        $concreteContext,
-                        [],
-                        $parameter->getClass() ? false : true
+                    $callParams[] = $this->container->resolve(
+                        $concreteContext, [], true
                     );
                 } else if ($parameter->getClass()) {
                     $classname = $parameter->getClass()->getName();
-                    $callParameters[] = $this->container->make($classname);
+                    $callParams[] = $this->container->make($classname);
                 } else {
                     if ($parameter->isDefaultValueAvailable()) {
-                        $callParameters[] = $parameter->getDefaultValue();
+                        $callParams[] = $parameter->getDefaultValue();
                     }
                 }
             }
         }
 
-        return $callParameters;
+        return $callParams;
     }
 
     /**
@@ -137,19 +135,18 @@ class Reflector
         try {
             if (is_array($key)) {
                 list($instance, $method) = $key;
-                //$key = $this->packClosure($instance, $method);
 
-                //if (!($key instanceof Closure)) {
-                //    throw new ContainerException(
-                //        'Cannot resolve %s::%s',
-                //        (string)get_class($instance),
-                //        (string)$method
-                //    );
-                //}
-                
-                $parameters = (new ReflectionMethod($instance, $method))->getParameters();
-                $arguments = $this->buildArguments(get_class($instance), $parameters, $additional);
-                
+                $parameters = (
+                    (new ReflectionMethod($instance, $method))
+                        ->getParameters()
+                );
+
+                $arguments = $this->buildArguments(
+                    get_class($instance),
+                    $parameters,
+                    $additional
+                );
+
                 return call_user_func_array($key, $arguments);
             }
 
@@ -157,7 +154,9 @@ class Reflector
                 $reflection = new ReflectionFunction($key);
 
                 $parameters = $reflection->getParameters();
-                $arguments = $this->buildArguments('Closure', $parameters, $additional);
+                $arguments = $this->buildArguments(
+                    'Closure', $parameters, $additional
+                );
 
                 return call_user_func_array($key, $arguments);
             } else {

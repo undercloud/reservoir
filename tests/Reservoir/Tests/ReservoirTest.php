@@ -199,6 +199,16 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
                 });
 
         $this->assertEquals(true, $this->di->make('Bat')->getBar() instanceof \Foo);
+
+        require_once __DIR__ . '/Quux.php';
+
+        $quux = new \Quux;
+
+        $this->di->when('Baz')
+                 ->needs('Quux')
+                 ->give($quux);
+
+        $this->assertEquals($quux, $this->di->make('Baz::quux'));
     }
 
     public function testAdditional()
