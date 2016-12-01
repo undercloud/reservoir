@@ -218,6 +218,14 @@ class Container
         return $this;
     }
 
+    /**
+     * Fork container value
+     *
+     * @param  string  $key  name
+     * @param  Closure $call resolver
+     *
+     * @return self
+     */
     public function fork($key, Closure $call)
     {
         if (!$this->has($key)) {
