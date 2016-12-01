@@ -136,6 +136,21 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
         $thisis->assertEquals(49, $this->di->make('foo'));
     }
 
+    public function testFork()
+    {
+        $thisis = $this;
+
+        $this->di->instance('foo', new \Foo);
+
+        $this->di->fork('foo', function($foo, $di) use ($thisis) {
+            $thisis->assertEquals(true, $foo instanceof \Foo);
+            $thisis->di->instance('x-foo', $foo);
+        });
+
+        $this->assertEquals(true, $this->di->make('foo') == $this->di->make('x-foo'));
+        $this->assertEquals(false, $this->di->make('foo') === $this->di->make('x-foo'));
+    }
+
     public function testArrayAccess()
     {
         $this->di['foo'] = 'bar';

@@ -218,6 +218,31 @@ class Container
         return $this;
     }
 
+    public function fork($key, Closure $call)
+    {
+        if (!$this->has($key)) {
+            throw new ContainerException(
+                sprintf('Target %s does not exists', $key)
+            );
+        }
+
+        $reference = $this->persistentStorage->getSourceReference($key)[$key];
+        if (is_array($reference)) {
+            $copy = [];
+            foreach ($reference as $key => $value) {
+                $copy[$key] = is_object($value) ? clone $value : $value;
+            }
+
+            call_user_func_array($call, [$copy, $this]);
+        } else if (is_object($reference)) {
+            call_user_func_array($call, [clone $reference, $this]);
+        } else {
+            call_user_func_array($call, [$reference, $this]);
+        }
+
+        return $this;
+    }
+
     /**
      * Remove container value by key
      *
