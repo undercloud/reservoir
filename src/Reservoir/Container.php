@@ -221,8 +221,8 @@ class Container
     /**
      * Fork container value
      *
-     * @param  string  $key  name
-     * @param  Closure $call resolver
+     * @param string  $key  name
+     * @param Closure $call resolver
      *
      * @return self
      */
