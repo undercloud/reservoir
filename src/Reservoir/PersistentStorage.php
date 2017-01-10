@@ -118,4 +118,3 @@ class PersistentStorage
         return $this->storage[$key];
     }
 }
-?>

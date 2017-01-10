@@ -173,4 +173,3 @@ class HashMap implements ArrayAccess, IteratorAggregate, Countable
         $this->del($offset);
     }
 }
-?>

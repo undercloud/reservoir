@@ -315,9 +315,7 @@ class Container
             $provides = $instance->provides;
 
             if ($provides) {
-                if (!is_array($provides)) {
-                    $provides = [$provides];
-                }
+                $provides = (array) $provides;
 
                 $key = get_class($instance);
                 $this->persistentStorage->deferred[$key] = [
@@ -391,4 +389,3 @@ class Container
         }
     }
 }
-?>
