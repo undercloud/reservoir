@@ -41,6 +41,7 @@ class PersistentStorage
      */
     public function keys()
     {
+        echo 'go';
         $keys = [];
         foreach ($this->storage as $key => $value) {
             if (in_array($key, self::$watch)) {
