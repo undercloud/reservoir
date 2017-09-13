@@ -1,18 +1,18 @@
 # Reservoir
 [![Build Status](https://travis-ci.org/undercloud/reservoir.svg?branch=master)](https://travis-ci.org/undercloud/reservoir)
 
-##Installation
+## Installation
 Install by composer
 `composer require undercloud/reservoir`
 
-##Usage
+## Usage
 
 Create container instance
 ```PHP
 $di = new Reservoir\Di;
 ```
 
-###instance
+### instance
 
 ```PHP
 $di->instance('foo', new Bar);
@@ -25,7 +25,7 @@ $di->instance('foo', function ($di) {
 });
 ```
 
-###singleton
+### singleton
 
 ```PHP
 $di->singleton('db', function(Reservoir\Di $di) {
@@ -37,7 +37,7 @@ $di->singleton('db', function(Reservoir\Di $di) {
 });
 ```
 
-###bind
+### bind
 
 ```PHP
 $di->bind('database', function(Reservoir\Di $di) {
@@ -52,20 +52,20 @@ $di->bind('database', function(Reservoir\Di $di) {
 $di->bind('App\Database\Abstract', 'App\Database\Mysql');
 ```
 
-###alias
+### alias
 
 ```PHP
 $di->alias('db', 'database');
 ```
 
-###isAlias
+### isAlias
 
 ```PHP
 // true
 $di->isAlias('db');
 ```
 
-###decorator
+### decorator
 
 ```PHP
 $di->decorator('db', function($db, Reservoir\Di $di) {
@@ -75,7 +75,7 @@ $di->decorator('db', function($db, Reservoir\Di $di) {
 });
 ```
 
-###fork
+### fork
 
 ```PHP
 $di->fork('db', function($db, Reservoir\Di $di) {
@@ -85,9 +85,9 @@ $di->fork('db', function($db, Reservoir\Di $di) {
 })
 ```
 
-##Resolve
+## Resolve
 
-###make
+### make
 
 ```PHP
 $di->make('foo');
@@ -97,14 +97,14 @@ $di->make('foo');
 $di->make
 ```
 
-###makes
+### makes
 
 ```PHP
 // [Foo, Bar]
 list($foo, $bar) = $di->makes('foo', 'bar');
 ```
 
-##Shortcut
+## Shortcut
 
 ```PHP
 $bar = $di['foo'];
@@ -123,14 +123,14 @@ isset($di['foo']);
 unset($di['foo']);
 ```
 
-##Context
+## Context
 
-###when
-###context
-###isOverriden
-###getOverride
+### when
+### context
+### isOverriden
+### getOverride
 
-##ServiceProvider
+## ServiceProvider
 
 
 ```PHP
@@ -156,7 +156,7 @@ Register service provider
 $di->register(new DatabaseServiceProvider);
 ```
 
-###deferred providers
+### deferred providers
 
 
 ```PHP
@@ -173,9 +173,9 @@ class DatabaseServiceProvider extends ServiceProvider
 }
 ```
 
-##Utils
+## Utils
 
-###has
+### has
 
 Check if key registered
 ```PHP
@@ -183,7 +183,7 @@ Check if key registered
 $di->has('foo')
 ```
 
-###keys
+### keys
 
 Get all registered keys
 ```PHP
@@ -191,14 +191,14 @@ Get all registered keys
 $di->keys()
 ```
 
-###forget
+### forget
 
 Remove instance
 ```PHP
 $di->forget('foo')
 ```
 
-###flush
+### flush
 
 Clear all
 ```PHP
