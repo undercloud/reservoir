@@ -106,9 +106,11 @@ class Reflector
                 if ($hasContext) {
                     $concreteContext = $this->getContext($context, $parameter);
                     $callParams[] = $this->container->resolve(
-                        $concreteContext, [], true
+                        $concreteContext,
+                        [],
+                        true
                     );
-                } else if ($parameter->getClass()) {
+                } elseif ($parameter->getClass()) {
                     $classname = $parameter->getClass()->getName();
                     $callParams[] = $this->container->make($classname);
                 } else {
@@ -155,7 +157,9 @@ class Reflector
 
                 $parameters = $reflection->getParameters();
                 $arguments = $this->buildArguments(
-                    'Closure', $parameters, $additional
+                    'Closure',
+                    $parameters,
+                    $additional
                 );
 
                 return call_user_func_array($key, $arguments);

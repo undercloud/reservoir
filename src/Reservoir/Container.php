@@ -124,10 +124,12 @@ class Container
     public function singleton($key, $resolver)
     {
         if (!is_string($resolver) and !($resolver instanceof Closure)) {
-            throw new ContainerException(sprintf(
-                'Argument 2 must be string or Closure, %s given',
-                gettype($resolver)
-            ));
+            throw new ContainerException(
+                sprintf(
+                    'Argument 2 must be string or Closure, %s given',
+                    gettype($resolver)
+                )
+            );
         }
 
         $this->check($key);
@@ -147,10 +149,12 @@ class Container
     public function bind($key, $resolver)
     {
         if (!is_string($resolver) and !($resolver instanceof Closure)) {
-            throw new ContainerException(sprintf(
-                'Argument 2 must be string or Closure, %s given',
-                gettype($resolver)
-            ));
+            throw new ContainerException(
+                sprintf(
+                    'Argument 2 must be string or Closure, %s given',
+                    gettype($resolver)
+                )
+            );
         }
 
         $this->check($key);
@@ -242,7 +246,7 @@ class Container
             }
 
             call_user_func_array($call, [$copy, $this]);
-        } else if (is_object($reference)) {
+        } elseif (is_object($reference)) {
             call_user_func_array($call, [clone $reference, $this]);
         } else {
             call_user_func_array($call, [$reference, $this]);
@@ -360,28 +364,28 @@ class Container
             return $this->reflector->reflect($key, $additional);
         }
 
-        $ps = $this->persistentStorage;
+        $storage = $this->persistentStorage;
 
         if ($this->isAlias($key)) {
-            $key = $ps->aliases[$key];
+            $key = $storage->aliases[$key];
         }
 
         $this->resolveDeferred($key);
 
-        if ($ps->instances->has($key)) {
-            return $ps->instances[$key];
+        if ($storage->instances->has($key)) {
+            return $storage->instances[$key];
         }
 
-        if ($ps->registry->has($key)) {
-            $registry = $ps->registry[$key];
+        if ($storage->registry->has($key)) {
+            $registry = $storage->registry[$key];
             $instance = $this->resolve($registry, $additional);
 
             return $instance;
-        } else if ($ps->singletones->has($key)) {
-            $singleton = $ps->singletones[$key];
+        } elseif ($storage->singletones->has($key)) {
+            $singleton = $storage->singletones[$key];
             $instance = $this->resolve($singleton, $additional);
-            $ps->instances[$key] = $instance;
-            $ps->singletones->del($key);
+            $storage->instances[$key] = $instance;
+            $storage->singletones->del($key);
 
             return $instance;
         } else {

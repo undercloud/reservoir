@@ -1,5 +1,6 @@
 <?php
 namespace Reservoir;
+
 /**
  * Service provider base class
  *
