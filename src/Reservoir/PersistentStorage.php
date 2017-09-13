@@ -41,12 +41,14 @@ class PersistentStorage
      */
     public function keys()
     {
-        echo 'go';
         $keys = [];
         foreach ($this->storage as $key => $value) {
             if (in_array($key, self::$watch)) {
-                var_dump($key,$value,$value->keys());
                 $keys = array_merge($keys, $value->keys());
+                
+                if (!is_array($keys)) {
+                    throw new Exception(print_r([$key,$value,$value->keys()],true));
+                }
             }
         }
 
