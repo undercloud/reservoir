@@ -10,7 +10,7 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
 {
     private $di;
 
-    public function __construct()
+    public function setUp()
     {
         error_reporting(-1);
         date_default_timezone_set('UTC');
