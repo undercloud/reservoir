@@ -44,6 +44,7 @@ class PersistentStorage
         $keys = [];
         foreach ($this->storage as $key => $value) {
             if (in_array($key, self::$watch)) {
+                var_dump($key,$value,$value->keys());
                 $keys = array_merge($keys, $value->keys());
             }
         }
