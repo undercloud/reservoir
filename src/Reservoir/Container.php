@@ -8,6 +8,7 @@ use ReflectionException;
 /**
  * Container API
  *
+ * @method void resolving(Closure $callback)
  * @category IoC\DI
  * @package  Reservoir
  * @author   undercloud <lodashes@gmail.com>
@@ -27,12 +28,18 @@ class Container
     protected $persistentStorage;
 
     /**
+     * @var Reservoir\Pipe
+     */
+    protected $pipe;
+
+    /**
      * Initialize instance
      */
     public function __construct()
     {
         $this->reflector = new Reflector($this);
         $this->persistentStorage = new PersistentStorage;
+        $this->pipe = new Pipe;
     }
 
     /**
@@ -333,6 +340,47 @@ class Container
     }
 
     /**
+     * Add container listener
+     *
+     * @param  string       $target   name
+     * @param  Closure|null $callback handle
+     *
+     * @return null
+     */
+    public function resolving($target, Closure $callback = null)
+    {
+        if (func_num_args() === 1) {
+            if (!($target instanceof Closure)) {
+                throw new ContainerException(
+                    sprintf(
+                        'Argument 1 must be Closure, %s given',
+                        gettype($target)
+                    )
+                );
+            }
+
+            $this->pipe->all($target);
+        } else {
+            $this->pipe->on($target, $callback);
+        }
+    }
+
+    /**
+     * Pipe preprocessor
+     *
+     * @param string $key name
+     * @param mixed  $val item
+     *
+     * @return mixed
+     */
+    private function pipe($key, $val)
+    {
+        $this->pipe->fire($key, $val, $this);
+
+        return $val;
+    }
+
+    /**
      * Return list of requested services
      *
      * @param mixed $keys,... services list
@@ -361,7 +409,9 @@ class Container
     public function make($key, array $additional = [])
     {
         if (is_array($key) or $key instanceof Closure) {
-            return $this->reflector->reflect($key, $additional);
+            $val = $this->reflector->reflect($key, $additional);
+
+            return $this->pipe($key, $val);
         }
 
         $storage = $this->persistentStorage;
@@ -373,23 +423,25 @@ class Container
         $this->resolveDeferred($key);
 
         if ($storage->instances->has($key)) {
-            return $storage->instances[$key];
+            return $this->pipe($key, $storage->instances[$key]);
         }
 
         if ($storage->registry->has($key)) {
             $registry = $storage->registry[$key];
             $instance = $this->resolve($registry, $additional);
 
-            return $instance;
+            return $this->pipe($key, $instance);
         } elseif ($storage->singletones->has($key)) {
             $singleton = $storage->singletones[$key];
             $instance = $this->resolve($singleton, $additional);
             $storage->instances[$key] = $instance;
             $storage->singletones->del($key);
 
-            return $instance;
+            return $this->pipe($key, $instance);
         } else {
-            return $this->reflector->reflect($key, $additional);
+            $val = $this->reflector->reflect($key, $additional);
+
+            return $this->pipe($key, $val);
         }
     }
 }

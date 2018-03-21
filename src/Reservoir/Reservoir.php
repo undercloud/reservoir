@@ -7,3 +7,4 @@ require_once __DIR__ . '/Reflector.php';
 require_once __DIR__ . '/ContextBinder.php';
 require_once __DIR__ . '/PersistentStorage.php';
 require_once __DIR__ . '/HashMap.php';
+require_once __DIR__ . '/Pipe.php';

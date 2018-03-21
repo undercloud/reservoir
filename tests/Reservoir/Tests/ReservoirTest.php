@@ -272,4 +272,25 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(false, $this->di->has('xbaz'));
         $this->assertEquals(true,$this->di->make('xbaz') instanceof \Baz);
     }
+
+    public function testResolving()
+    {
+        $thisis = $this;
+
+        $this->di->instance('foo', 'bar');
+        $this->di->instance('bar', 'baz');
+
+        $this->di->resolving('foo', function($val, $context) use ($thisis) {
+            $thisis->assertEquals($val, 'bar');
+            $thisis->assertEquals($context, $thisis->di);
+        });
+
+        $this->di->resolving(function($val, $context) use ($thisis) {
+            $thisis->assertContains($val, ['bar','baz']);
+            $thisis->assertEquals($context, $thisis->di);
+        });
+
+        $this->di->make('foo');
+        $this->di->make('bar');
+    }
 }
