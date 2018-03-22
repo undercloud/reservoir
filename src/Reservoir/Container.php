@@ -293,10 +293,15 @@ class Container
      */
     private function resolveDeferred($key)
     {
-        foreach ($this->persistentStorage->deferred as $class => $map) {
-            if (in_array($key, $map['provides'], true)) {
-                $this->invokeRegister($map['instance']);
+        foreach ($this->persistentStorage->deferred as $class => $provides) {
+            if (in_array($key, $provides, true)) {
                 $this->persistentStorage->deferred->del($class);
+
+                if (is_string($class)) {
+                    $class = $this->make($class);
+                }
+
+                $this->invokeRegister($class);
             }
         }
     }
@@ -322,21 +327,12 @@ class Container
      */
     public function register(ServiceProvider $instance)
     {
-        if (true === $instance->deferred) {
-            $provides = $instance->provides;
+        $this->invokeRegister($instance);
+    }
 
-            if ($provides) {
-                $provides = (array) $provides;
-
-                $key = get_class($instance);
-                $this->persistentStorage->deferred[$key] = [
-                    'instance' => $instance,
-                    'provides' => $provides
-                ];
-            }
-        } else {
-            $this->invokeRegister($instance);
-        }
+    public function defer($provider, $provides)
+    {
+        $this->persistentStorage->deferred[$provider] = (array) $provides;
     }
 
     /**

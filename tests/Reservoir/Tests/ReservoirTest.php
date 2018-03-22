@@ -262,10 +262,15 @@ class ReservoirTest extends PHPUnit_Framework_TestCase
     {
         require_once __DIR__ . '/../../../src/Reservoir/ServiceProvider.php';
         require_once __DIR__ . '/Service.php';
-        require_once __DIR__ . '/DeferredService.php';
+
+        spl_autoload_register(function($class){
+            if ($class === 'DeferredService') {
+                require_once __DIR__ . '/DeferredService.php';
+            }
+        });
 
         $this->di->register(new \Service);
-        $this->di->register(new \DeferredService);
+        $this->di->defer('DeferredService', 'xbaz');
 
         $this->assertEquals(true,$this->di->make('xfoo') instanceof \Foo);
 

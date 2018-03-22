@@ -138,10 +138,8 @@ class Reflector
             if (is_array($key)) {
                 list($instance, $method) = $key;
 
-                $parameters = (
-                    (new ReflectionMethod($instance, $method))
-                        ->getParameters()
-                );
+                $reflection = new ReflectionMethod($instance, $method);
+                $parameters = $reflection->getParameters();
 
                 $arguments = $this->buildArguments(
                     get_class($instance),
@@ -149,7 +147,11 @@ class Reflector
                     $additional
                 );
 
-                return call_user_func_array($key, $arguments);
+                if (!is_object($instance)) {
+                    $instance = $this->container->make($instance);
+                }
+
+                return $reflection->invokeArgs($instance, $arguments);
             }
 
             if ($key instanceof Closure) {
@@ -162,7 +164,7 @@ class Reflector
                     $additional
                 );
 
-                return call_user_func_array($key, $arguments);
+                return $reflection->invokeArgs($arguments);
             } else {
                 if (false !== strpos($key, '::')) {
                     list($class, $method) = explode('::', $key);
