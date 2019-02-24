@@ -4,19 +4,9 @@ namespace Reservoir\Tests;
 use Exception;
 use Reservoir\Di;
 use Reservoir\ContainerException;
-use PHPUnit_Framework_TestCase;
 
-class ReservoirTest extends PHPUnit_Framework_TestCase
+class ReservoirTest extends ReservoirSetup
 {
-    private $di;
-
-    public function setUp()
-    {
-        error_reporting(-1);
-        date_default_timezone_set('UTC');
-        $this->di = new Di;
-    }
-
     public function testInstance()
     {
         $this->di->instance('foo', 'bar');
