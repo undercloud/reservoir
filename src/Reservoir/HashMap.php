@@ -41,9 +41,9 @@ class HashMap implements ArrayAccess, IteratorAggregate, Countable
      */
     public function get($offset)
     {
-        if ($this->has($offset)) {
-            return $this->hashMap[$offset];
-        }
+        return ($this->has($offset))
+            ? $this->hashMap[$offset]
+            : null;
     }
 
     /**
@@ -52,7 +52,7 @@ class HashMap implements ArrayAccess, IteratorAggregate, Countable
      * @param string $offset key
      * @param mixed  $value  value
      *
-     * @return null
+     * @return void
      */
     public function set($offset, $value)
     {
@@ -76,7 +76,7 @@ class HashMap implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $offset key
      *
-     * @return null
+     * @return void
      */
     public function del($offset)
     {
@@ -106,7 +106,7 @@ class HashMap implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Clear storage
      *
-     * @return null
+     * @return void
      */
     public function clear()
     {
@@ -134,7 +134,7 @@ class HashMap implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * @see Reservoir\HashMap::has
+     * @see HashMap::has
      *
      * @return boolean
      */
@@ -144,7 +144,7 @@ class HashMap implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * @see Reservoir\HashMap::get
+     * @see HashMap::get
      *
      * @return mixed
      */
@@ -154,9 +154,9 @@ class HashMap implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * @see Reservoir\HashMap::set
+     * @see HashMap::set
      *
-     * @return null
+     * @return void
      */
     public function offsetSet($offset, $value)
     {
@@ -164,9 +164,9 @@ class HashMap implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * @see Reservoir\HashMap::del
+     * @see HashMap::del
      *
-     * @return null
+     * @return void
      */
     public function offsetUnset($offset)
     {

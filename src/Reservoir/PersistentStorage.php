@@ -9,6 +9,13 @@ namespace Reservoir;
  * @author   undercloud <lodashes@gmail.com>
  * @license  https://opensource.org/licenses/MIT MIT
  * @link     http://github.com/undercloud/reservoir
+ *
+ * @property HashMap aliases
+ * @property HashMap instances
+ * @property HashMap registry
+ * @property HashMap singletons
+ * @property HashMap deferred
+ * @property HashMap context
  */
 class PersistentStorage
 {
@@ -20,7 +27,7 @@ class PersistentStorage
     /**
      * @var array watch keys
      */
-    protected static $watch = ['aliases','instances','registry','singletones'];
+    protected static $watch = ['aliases','instances','registry','singletons'];
 
     /**
      * Check if key exists
@@ -79,7 +86,7 @@ class PersistentStorage
      *
      * @param string $key key
      *
-     * @return Reservoir\HashMap
+     * @return mixed
      */
     public function getSourceReference($key)
     {

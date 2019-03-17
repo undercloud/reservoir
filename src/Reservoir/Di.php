@@ -40,6 +40,8 @@ class Di extends Container implements ArrayAccess
      *
      * @param string $key key
      *
+     * @throws ContainerException
+     *
      * @return mixed
      */
     public function offsetGet($key)
@@ -53,7 +55,9 @@ class Di extends Container implements ArrayAccess
      * @param string $key   key
      * @param mixed  $value value
      *
-     * @return null
+     * @throws ContainerException
+     *
+     * @return void
      */
     public function offsetSet($key, $value)
     {
@@ -75,7 +79,7 @@ class Di extends Container implements ArrayAccess
      *
      * @param string $key key
      *
-     * @return null
+     * @return void
      */
     public function offsetUnset($key)
     {
@@ -87,7 +91,7 @@ class Di extends Container implements ArrayAccess
      *
      * @param mixed $concrete value
      *
-     * @return Reservoir\ContextBinder
+     * @return ContextBinder
      */
     public function when($concrete)
     {
@@ -101,7 +105,7 @@ class Di extends Container implements ArrayAccess
      * @param string $needs          value
      * @param mixed  $implementation value
      *
-     * @return Reservoir\Di
+     * @return Di
      */
     public function context($concrete, $needs, $implementation)
     {

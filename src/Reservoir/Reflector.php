@@ -20,7 +20,7 @@ use ReflectionException;
 class Reflector
 {
     /**
-     * @var Reservoir\Container instance
+     * @var Di instance
      */
     protected $container;
 
@@ -54,7 +54,7 @@ class Reflector
     }
 
     /**
-     * Check binded context
+     * Check bind context
      *
      * @param mixed               $context   context
      * @param ReflectionParameter $parameter instance
@@ -69,7 +69,7 @@ class Reflector
     }
 
     /**
-     * Return binded context
+     * Return bind context
      *
      * @param mixed               $context   context
      * @param ReflectionParameter $parameter instance
@@ -89,6 +89,8 @@ class Reflector
      * @param mixed $context    context
      * @param array $parameters list
      * @param array $additional parameters
+     *
+     * @throws ContainerException
      *
      * @return array
      */
@@ -129,6 +131,8 @@ class Reflector
      *
      * @param string $key        key
      * @param array  $additional parameters
+     *
+     * @throws ContainerException
      *
      * @return mixed
      */

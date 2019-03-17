@@ -2,13 +2,10 @@
 namespace Reservoir;
 
 use Closure;
-use ReflectionClass;
-use ReflectionException;
 
 /**
  * Container API
  *
- * @method void resolving(Closure $callback)
  * @category IoC\DI
  * @package  Reservoir
  * @author   undercloud <lodashes@gmail.com>
@@ -18,17 +15,17 @@ use ReflectionException;
 class Container
 {
     /**
-     * @var Reservoir\Reflector
+     * @var Reflector
      */
     protected $reflector;
 
     /**
-     * @var Reservoir\PersistentStorage
+     * @var PersistentStorage
      */
     protected $persistentStorage;
 
     /**
-     * @var Reservoir\Pipe
+     * @var Pipe
      */
     protected $pipe;
 
@@ -49,6 +46,8 @@ class Container
      * @param array   $additional params
      * @param boolean $raw        is raw value
      *
+     * @throws ContainerException
+     *
      * @return mixed
      */
     public function resolve($entity, array $additional = [], $raw = false)
@@ -65,9 +64,9 @@ class Container
      *
      * @param string $key key
      *
-     * @throws Reservoir\ContainerEception
+     * @throws ContainerException
      *
-     * @return boolean
+     * @return void
      */
     private function check($key)
     {
@@ -140,7 +139,7 @@ class Container
         }
 
         $this->check($key);
-        $this->persistentStorage->singletones[$key] = $resolver;
+        $this->persistentStorage->singletons[$key] = $resolver;
 
         return $this;
     }
@@ -150,6 +149,8 @@ class Container
      *
      * @param string         $key      name
      * @param string|Closure $resolver callback
+     *
+     * @throws ContainerException
      *
      * @return self
      */
@@ -175,6 +176,8 @@ class Container
      *
      * @param string $alias    name
      * @param string $abstract key
+     *
+     * @throws ContainerException
      *
      * @return self
      */
@@ -204,7 +207,7 @@ class Container
      * @param string $key   name
      * @param mixed  $value new value
      *
-     * @throws Reservoir\ContainerException
+     * @throws ContainerException
      *
      * @return self
      */
@@ -234,6 +237,8 @@ class Container
      *
      * @param string  $key  name
      * @param Closure $call resolver
+     *
+     * @throws ContainerException
      *
      * @return self
      */
@@ -277,11 +282,11 @@ class Container
     /**
      * Clear container
      *
-     * @return null
+     * @return void
      */
     public function flush()
     {
-        return $this->persistentStorage->flush();
+        $this->persistentStorage->flush();
     }
 
     /**
@@ -289,7 +294,9 @@ class Container
      *
      * @param string $key name
      *
-     * @return null
+     * @throws ContainerException
+     *
+     * @return void
      */
     private function resolveDeferred($key)
     {
@@ -309,9 +316,9 @@ class Container
     /**
      * Register service
      *
-     * @param ServiceProvide $instance value
+     * @param ServiceProvider $instance value
      *
-     * @return null
+     * @return void
      */
     private function invokeRegister(ServiceProvider $instance)
     {
@@ -321,15 +328,23 @@ class Container
     /**
      * Register service logic
      *
-     * @param ServiceProvide $instance value
+     * @param ServiceProvider $instance value
      *
-     * @return null
+     * @return void
      */
     public function register(ServiceProvider $instance)
     {
         $this->invokeRegister($instance);
     }
 
+    /**
+     * Create deferred service provider
+     *
+     * @param mixed $provider
+     * @param mixed $provides
+     *
+     * @return void
+     */
     public function defer($provider, $provides)
     {
         $this->persistentStorage->deferred[$provider] = (array) $provides;
@@ -338,10 +353,12 @@ class Container
     /**
      * Add container listener
      *
-     * @param  string       $target   name
-     * @param  Closure|null $callback handle
+     * @param  Closure|string $target   name
+     * @param  Closure|null   $callback handle
      *
-     * @return null
+     * @throws ContainerException
+     *
+     * @return void
      */
     public function resolving($target, Closure $callback = null)
     {
@@ -379,16 +396,14 @@ class Container
     /**
      * Return list of requested services
      *
-     * @param mixed $keys,... services list
-     *
      * @return array
      */
     public function makes()
     {
-        $thisis = $this;
+        $self = $this;
         $args = func_get_args();
-        $callback = function ($key) use ($thisis) {
-            return $thisis->make($key);
+        $callback = function ($key) use ($self) {
+            return $self->make($key);
         };
 
         return array_map($callback, $args);
@@ -399,6 +414,8 @@ class Container
      *
      * @param string $key        name
      * @param array  $additional parameters
+     *
+     * @throws ContainerException
      *
      * @return mixed
      */
@@ -427,11 +444,11 @@ class Container
             $instance = $this->resolve($registry, $additional);
 
             return $this->pipe($key, $instance);
-        } elseif ($storage->singletones->has($key)) {
-            $singleton = $storage->singletones[$key];
+        } elseif ($storage->singletons->has($key)) {
+            $singleton = $storage->singletons[$key];
             $instance = $this->resolve($singleton, $additional);
             $storage->instances[$key] = $instance;
-            $storage->singletones->del($key);
+            $storage->singletons->del($key);
 
             return $this->pipe($key, $instance);
         } else {

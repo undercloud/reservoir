@@ -27,7 +27,7 @@ class Pipe
      * @param  string  $key      name
      * @param  Closure $callback handle
      *
-     * @return null
+     * @return void
      */
     public function on($key, Closure $callback)
     {
@@ -43,7 +43,7 @@ class Pipe
      *
      * @param  Closure $callback handle
      *
-     * @return null
+     * @return void
      */
     public function all(Closure $callback)
     {
@@ -57,7 +57,7 @@ class Pipe
      * @param  mixed     $val       item
      * @param  Container $container instance
      *
-     * @return null
+     * @return void
      */
     public function fire($key, $val, Container $container)
     {

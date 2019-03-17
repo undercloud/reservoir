@@ -13,7 +13,7 @@ namespace Reservoir;
 class ContextBinder
 {
     /**
-     * @var Reservoir\Container instance
+     * @var Di instance
      */
     protected $container;
 
@@ -44,7 +44,7 @@ class ContextBinder
      *
      * @param mixed $abstract value
      *
-     * @return Reservoir\ContextBinder
+     * @return ContextBinder
      */
     public function needs($abstract)
     {
@@ -58,7 +58,7 @@ class ContextBinder
      *
      * @param mixed $implementation value
      *
-     * @return Reservoir\Di
+     * @return Di
      */
     public function give($implementation)
     {
