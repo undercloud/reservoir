@@ -12,8 +12,8 @@ class ReservoirTest extends ReservoirSetup
         $this->di->instance('foo', 'bar');
 
         $this->assertEquals(true, $this->di->has('foo'));
-        $this->assertEquals(false, $this->di->has('bar'));
 
+        $this->assertEquals(false, $this->di->has('bar'));
         $this->assertEquals(['foo'],$this->di->keys());
 
         $this->di->instance('bar', null);

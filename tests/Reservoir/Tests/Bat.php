@@ -13,4 +13,3 @@ class Bat
         return $this->bar;
     }
 }
-?>

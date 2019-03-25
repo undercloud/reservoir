@@ -8,4 +8,3 @@ class DeferredService extends Reservoir\ServiceProvider
         });
     }
 }
-?>

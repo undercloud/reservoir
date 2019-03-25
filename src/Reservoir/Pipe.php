@@ -2,6 +2,7 @@
 namespace Reservoir;
 
 use Closure;
+use InvalidArgumentException;
 
 /**
  * Events resolver
@@ -31,6 +32,15 @@ class Pipe
      */
     public function on($key, Closure $callback)
     {
+        if (!is_array($key)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Argument 1 must be string, %s given',
+                    gettype($key)
+                )
+            );
+        }
+
         if (!isset($this->bindings[$key])) {
             $this->bindings[$key] = [];
         }

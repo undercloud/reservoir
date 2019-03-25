@@ -1,31 +1,25 @@
 # Reservoir
 [![Build Status](https://travis-ci.org/undercloud/reservoir.svg?branch=master)](https://travis-ci.org/undercloud/reservoir)
 
+> In software engineering, dependency injection is a technique whereby one object (or static method) supplies the dependencies of another object. A dependency is an object that can be used (a service).
+
 ## Installation
-Install by composer
 `composer require undercloud/reservoir`
 
 ## Usage
 
 Create container instance
-```PHP
+```php
 $di = new Reservoir\Di;
 ```
 
-### instance
+### Instance
 
-```PHP
+```php
 $di->instance('foo', new Bar);
 ```
 
-Regiser callback that 
-```PHP
-$di->instance('foo', function ($di) {
-    ...
-});
-```
-
-### singleton
+### Singleton
 
 ```PHP
 $di->singleton('db', function(Reservoir\Di $di) {
@@ -37,7 +31,7 @@ $di->singleton('db', function(Reservoir\Di $di) {
 });
 ```
 
-### bind
+### Bind
 
 ```PHP
 $di->bind('database', function(Reservoir\Di $di) {
@@ -52,7 +46,7 @@ $di->bind('database', function(Reservoir\Di $di) {
 $di->bind('App\Database\Abstract', 'App\Database\Mysql');
 ```
 
-### alias
+### Alias
 
 ```PHP
 $di->alias('db', 'database');

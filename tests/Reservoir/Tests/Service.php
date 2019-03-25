@@ -8,4 +8,3 @@ class Service extends Reservoir\ServiceProvider
         });
     }
 }
-?>

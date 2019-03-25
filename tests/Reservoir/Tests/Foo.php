@@ -2,4 +2,3 @@
 class Foo implements Bar {
 
 }
-?>

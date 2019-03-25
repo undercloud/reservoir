@@ -50,7 +50,7 @@ class Container
      *
      * @return mixed
      */
-    public function resolve($entity, array $additional = [], $raw = false)
+    private function resolve($entity, array $additional = [], $raw = false)
     {
         if ($entity instanceof Closure) {
             return call_user_func($entity, $this);
@@ -412,8 +412,8 @@ class Container
     /**
      * Retrieve service by key
      *
-     * @param string $key        name
-     * @param array  $additional parameters
+     * @param mixed $key        name
+     * @param array $additional parameters
      *
      * @throws ContainerException
      *
@@ -444,17 +444,19 @@ class Container
             $instance = $this->resolve($registry, $additional);
 
             return $this->pipe($key, $instance);
-        } elseif ($storage->singletons->has($key)) {
+        }
+
+        if ($storage->singletons->has($key)) {
             $singleton = $storage->singletons[$key];
             $instance = $this->resolve($singleton, $additional);
             $storage->instances[$key] = $instance;
             $storage->singletons->del($key);
 
             return $this->pipe($key, $instance);
-        } else {
-            $val = $this->reflector->reflect($key, $additional);
-
-            return $this->pipe($key, $val);
         }
+
+        $val = $this->reflector->reflect($key, $additional);
+
+        return $this->pipe($key, $val);
     }
 }
