@@ -32,7 +32,7 @@ class Pipe
      */
     public function on($key, Closure $callback)
     {
-        if (!is_array($key)) {
+        if (!is_string($key)) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Argument 1 must be string, %s given',
