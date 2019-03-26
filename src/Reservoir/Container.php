@@ -50,7 +50,7 @@ class Container
      *
      * @return mixed
      */
-    private function resolve($entity, array $additional = [], $raw = false)
+    public function resolve($entity, array $additional = [], $raw = false)
     {
         if ($entity instanceof Closure) {
             return call_user_func($entity, $this);
