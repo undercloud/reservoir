@@ -63,10 +63,19 @@ class ReservoirTest extends ReservoirSetup
             $this->di->make('foo')
         );
 
+        $this->di->singleton('dt','DateTime');
+
+        $this->assertEquals(
+            $this->di->make('dt'),
+            $this->di->make('dt')
+        );
+
+        $this->assertTrue($this->di->make('dt') instanceof \DateTime);
+
         try {
             $this->di->singleton('bar', 0);
         } catch (Exception $e) {
-            $this->assertEquals(true, $e instanceof ContainerException);
+            $this->assertTrue($e instanceof ContainerException);
         }
     }
 
@@ -168,6 +177,7 @@ class ReservoirTest extends ReservoirSetup
         $this->assertEquals(true, $baz->getFoo() instanceof \Foo);
         $this->assertEquals(true, $this->di->make([$baz,'quux']) instanceof \Quux);
         $this->assertEquals(true, $this->di->make('Baz::quux') instanceof \Quux);
+        $this->assertEquals(true, $this->di->make($baz) instanceof \Quux);
         $this->assertEquals(true, $this->di->make([$baz,'staticQuux']) instanceof \Quux);
         $this->assertEquals(true, $this->di->make('Baz::staticQuux') instanceof \Quux);
         $this->assertEquals(true, $this->di->make($fn) instanceof \Foo);

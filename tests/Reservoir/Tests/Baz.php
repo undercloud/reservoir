@@ -22,4 +22,9 @@ class Baz
     {
         return $quux;
     }
+
+    public function __invoke(Quux $quux)
+    {
+        return $quux;
+    }
 }
