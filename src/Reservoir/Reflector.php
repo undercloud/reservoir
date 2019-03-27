@@ -7,6 +7,7 @@ use ReflectionMethod;
 use ReflectionFunction;
 use ReflectionParameter;
 use ReflectionException;
+use InvalidArgumentException;
 
 /**
  * Reflection API
@@ -27,9 +28,9 @@ class Reflector
     /**
      * Initialize instance
      *
-     * @param Container $container instance
+     * @param Di $container instance
      */
-    public function __construct(Container $container)
+    public function __construct(Di $container)
     {
         $this->container = $container;
     }
@@ -127,6 +128,81 @@ class Reflector
     }
 
     /**
+     * Normalize callable entity
+     *
+     * @param mixed $key callable entity
+     *
+     * @return array
+     */
+    private function normalizeCallable($key)
+    {
+        $instance = $method = null;
+
+        if ($key instanceof Closure) {
+            $method = $key;
+        } elseif (is_string($key) and false !== strpos($key, '::')) {
+            list($instance, $method) = explode('::', $key);
+        } elseif (is_string($key)) {
+            $instance = $key;
+        } elseif (is_object($key)) {
+            $instance = $key;
+            $method = '__invoke';
+        } else if (is_array($key)) {
+            list($instance, $method) = $key;
+        }
+
+        if (!isset($instance) and !isset($method)) {
+            throw new InvalidArgumentException(
+                'Invalid callable entity'
+            );
+        }
+
+        return [$instance, $method];
+    }
+
+    /**
+     * Normalize instance
+     *
+     * @param mixed $instance   entity
+     * @param array $additional arguments
+     *
+     * @throws ContainerException
+     * @throws ReflectionException
+     *
+     * @return mixed
+     */
+    private function normalizeInstance($instance, array $additional)
+    {
+        if (null === $instance) {
+            return;
+        }
+
+        if (is_string($instance)) {
+            $reflection = new ReflectionClass($instance);
+            if (false == $reflection->isInstantiable()) {
+                throw new ContainerException(
+                    sprintf('%s is not instantiable', $instance)
+                );
+            }
+
+            $constructor = $reflection->getConstructor();
+            if ($constructor) {
+                $parameters = $constructor->getParameters();
+                $arguments = $this->buildArguments(
+                    $instance,
+                    $parameters,
+                    $additional
+                );
+                $instance = $reflection->newInstanceArgs($arguments);
+            } else {
+                $instance = $reflection->newInstance();
+            }
+        }
+
+        return $instance;
+    }
+
+    /**
      * Resolve given key
      *
      * @param string $key        key
@@ -139,76 +215,31 @@ class Reflector
     public function reflect($key, array $additional = [])
     {
         try {
-            if (is_array($key)) {
-                list($instance, $method) = $key;
+            list($instance, $method) = $this->normalizeCallable($key);
 
+            $instance = $this->normalizeInstance($instance, $additional);
+
+            if ($instance and $method) {
                 $reflection = new ReflectionMethod($instance, $method);
-                $parameters = $reflection->getParameters();
-
-                $arguments = $this->buildArguments(
-                    get_class($instance),
-                    $parameters,
-                    $additional
-                );
-
-                if (!is_object($instance)) {
-                    $instance = $this->container->make($instance);
-                }
-
-                return $reflection->invokeArgs($instance, $arguments);
+                $class = get_class($instance);
+            } elseif ($method) {
+                $reflection = new ReflectionFunction($method);
+                $class = 'Closure';
+            } elseif ($instance) {
+                return $instance;
             }
 
-            if ($key instanceof Closure) {
-                $reflection = new ReflectionFunction($key);
+            $parameters = $reflection->getParameters();
+            $arguments = $this->buildArguments(
+                $class,
+                $parameters,
+                $additional
+            );
 
-                $parameters = $reflection->getParameters();
-                $arguments = $this->buildArguments(
-                    'Closure',
-                    $parameters,
-                    $additional
-                );
-
+            if ($reflection instanceof ReflectionFunction) {
                 return $reflection->invokeArgs($arguments);
-            } else {
-                if (false !== strpos($key, '::')) {
-                    list($class, $method) = explode('::', $key);
-                } else {
-                    $class = $key;
-                }
-
-                $reflection = new ReflectionClass($class);
-                if (false == $reflection->isInstantiable()) {
-                    throw new ContainerException(
-                        sprintf('%s is not instantiable', $class)
-                    );
-                }
-
-                $constructor = $reflection->getConstructor();
-                if ($constructor) {
-                    $parameters = $constructor->getParameters();
-                    $arguments = $this->buildArguments(
-                        $class,
-                        $parameters,
-                        $additional
-                    );
-                    $instance = $reflection->newInstanceArgs($arguments);
-                } else {
-                    $instance = $reflection->newInstance();
-                }
-
-                if (isset($method)) {
-                    $method = $reflection->getMethod($method);
-                    $parameters = $method->getParameters();
-                    $methodArguments = $this->buildArguments(
-                        $class,
-                        $parameters,
-                        $additional
-                    );
-
-                    return $method->invokeArgs($instance, $methodArguments);
-                } else {
-                    return $instance;
-                }
+            } elseif ($reflection instanceof ReflectionMethod) {
+                return $reflection->invokeArgs($instance, $arguments);
             }
         } catch (ReflectionException $e) {
             throw new ContainerException(

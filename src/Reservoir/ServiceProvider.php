@@ -15,9 +15,9 @@ abstract class ServiceProvider
     /**
      * Register service provider
      *
-     * @param mixed $app application instance
+     * @param mixed $container instance
      *
      * @return null
      */
-    abstract public function register($app);
+    abstract public function register($container);
 }

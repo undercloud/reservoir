@@ -12,7 +12,7 @@ use Closure;
  * @license  https://opensource.org/licenses/MIT MIT
  * @link     http://github.com/undercloud/reservoir
  */
-class Container
+abstract class Container
 {
     /**
      * @var Reflector
@@ -421,7 +421,7 @@ class Container
      */
     public function make($key, array $additional = [])
     {
-        if (is_array($key) or $key instanceof Closure) {
+        if (is_object($key) or is_array($key) or $key instanceof Closure) {
             $val = $this->reflector->reflect($key, $additional);
 
             return $this->pipe($key, $val);

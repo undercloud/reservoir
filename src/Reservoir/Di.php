@@ -16,14 +16,6 @@ use ArrayAccess;
 class Di extends Container implements ArrayAccess
 {
     /**
-     * Initialize instance
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * ArrayAccess::offsetExists
      *
      * @param string $key key
