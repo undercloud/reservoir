@@ -13,11 +13,26 @@ namespace Reservoir;
 abstract class ServiceProvider
 {
     /**
+     * @var bool
+     */
+    public $deferred = false;
+
+    /**
+     * Get provided keys
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return [];
+    }
+
+    /**
      * Register service provider
      *
-     * @param mixed $container instance
+     * @param Di $container instance
      *
      * @return null
      */
-    abstract public function register($container);
+    abstract public function register(Di $container);
 }

@@ -115,7 +115,6 @@ class ReservoirTest extends ReservoirSetup
 
         $this->di->alias('db', 'DataBase');
 
-        $this->assertEquals(true, $this->di->isAlias('db'));
         $this->assertEquals('MongoDB', $this->di->make('db'));
     }
 
@@ -150,17 +149,6 @@ class ReservoirTest extends ReservoirSetup
         $this->assertEquals(false, $this->di->make('foo') === $this->di->make('x-foo'));
     }
 
-    public function testArrayAccess()
-    {
-        $this->di['foo'] = 'bar';
-
-        $this->assertEquals('bar', $this->di['foo']);
-        $this->assertEquals(true, isset($this->di['foo']));
-
-        unset($this->di['foo']);
-        $this->assertEquals(false, isset($this->di['foo']));
-    }
-
     public function testReflection()
     {
         require_once __DIR__ . '/Foo.php';
@@ -189,6 +177,7 @@ class ReservoirTest extends ReservoirSetup
         $this->di->instance('quux', $quux);
 
         $this->assertEquals([$foo,$quux], $this->di->makes('foo','quux'));
+        $this->assertEquals([$foo,$quux], $this->di->makes(['foo','quux']));
     }
 
     public function testContext()
@@ -269,8 +258,8 @@ class ReservoirTest extends ReservoirSetup
             }
         });
 
-        $this->di->register(new \Service);
-        $this->di->defer('DeferredService', 'xbaz');
+        $this->di->register('Service');
+        $this->di->register('DeferredService');
 
         $this->assertEquals(true,$this->di->make('xfoo') instanceof \Foo);
 

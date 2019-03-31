@@ -196,7 +196,7 @@ abstract class Container
      *
      * @return boolean
      */
-    public function isAlias($key)
+    private function isAlias($key)
     {
         return $this->persistentStorage->aliases->has($key);
     }
@@ -300,15 +300,11 @@ abstract class Container
      */
     private function resolveDeferred($key)
     {
-        foreach ($this->persistentStorage->deferred as $class => $provides) {
+        foreach ($this->persistentStorage->deferred as $class => $pair) {
+            list($instance, $provides) = $pair;
             if (in_array($key, $provides, true)) {
                 $this->persistentStorage->deferred->del($class);
-
-                if (is_string($class)) {
-                    $class = $this->make($class);
-                }
-
-                $this->invokeRegister($class);
+                $this->invokeRegister($instance);
             }
         }
     }
@@ -328,26 +324,34 @@ abstract class Container
     /**
      * Register service logic
      *
-     * @param ServiceProvider $instance value
+     * @param string $serviceProvider class name
      *
      * @return void
      */
-    public function register(ServiceProvider $instance)
+    public function register($serviceProvider)
     {
-        $this->invokeRegister($instance);
+        /** @var ServiceProvider */
+        $providerInstance = new $serviceProvider();
+
+        if ($providerInstance->deferred) {
+            $this->defer($serviceProvider, $providerInstance, $providerInstance->provides());
+        } else {
+            $this->invokeRegister($providerInstance);
+        }
     }
 
     /**
      * Create deferred service provider
      *
-     * @param mixed $provider
-     * @param mixed $provides
+     * @param string          $provider target
+     * @param ServiceProvider $instance entity
+     * @param array           $provides dependency
      *
      * @return void
      */
-    public function defer($provider, $provides)
+    private function defer($provider, ServiceProvider $instance, array $provides)
     {
-        $this->persistentStorage->deferred[$provider] = (array) $provides;
+        $this->persistentStorage->deferred[$provider] = [$instance, $provides];
     }
 
     /**
@@ -401,7 +405,12 @@ abstract class Container
     public function makes()
     {
         $self = $this;
-        $args = func_get_args();
+        $args = (
+            (func_num_args() === 1 and is_array($firstArg = func_get_arg(0)))
+            ? $firstArg
+            : func_get_args()
+        );
+
         $callback = function ($key) use ($self) {
             return $self->make($key);
         };

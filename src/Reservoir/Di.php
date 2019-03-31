@@ -1,9 +1,6 @@
 <?php
 namespace Reservoir;
 
-use Closure;
-use ArrayAccess;
-
 /**
  * Dependency Injection API
  *
@@ -13,71 +10,8 @@ use ArrayAccess;
  * @license  https://opensource.org/licenses/MIT MIT
  * @link     http://github.com/undercloud/reservoir
  */
-class Di extends Container implements ArrayAccess
+class Di extends Container
 {
-    /**
-     * ArrayAccess::offsetExists
-     *
-     * @param string $key key
-     *
-     * @return boolean
-     */
-    public function offsetExists($key)
-    {
-        return $this->has($key);
-    }
-
-    /**
-     * ArrayAccess::offsetGet
-     *
-     * @param string $key key
-     *
-     * @throws ContainerException
-     *
-     * @return mixed
-     */
-    public function offsetGet($key)
-    {
-        return $this->make($key);
-    }
-
-    /**
-     * ArrayAccess::offsetSet
-     *
-     * @param string $key   key
-     * @param mixed  $value value
-     *
-     * @throws ContainerException
-     *
-     * @return void
-     */
-    public function offsetSet($key, $value)
-    {
-        if (null === $key) {
-            throw new ContainerException('Cannot register empty key');
-        }
-
-        if (!($value instanceof Closure)) {
-            $value = function () use ($value) {
-                return $value;
-            };
-        }
-
-        $this->bind($key, $value);
-    }
-
-    /**
-     * ArrayAccess::offsetUnset
-     *
-     * @param string $key key
-     *
-     * @return void
-     */
-    public function offsetUnset($key)
-    {
-        $this->forget($key);
-    }
-
     /**
      * Initialize context binder
      *

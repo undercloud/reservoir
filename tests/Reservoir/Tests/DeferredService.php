@@ -1,7 +1,14 @@
 <?php
 class DeferredService extends Reservoir\ServiceProvider
 {
-    public function register($di)
+    public $deferred = true;
+
+    public function provides()
+    {
+        return ['xbaz'];
+    }
+
+    public function register(Reservoir\Di $di)
     {
         $di->bind('xbaz', function($di){
             return $di->make('Baz');
