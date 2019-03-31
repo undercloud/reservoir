@@ -151,6 +151,17 @@ $di->make(function(Foo $foo, Bar $bar){
 })
 ```
 
+### Extra parameters
+
+The `make` method has a second `$additional` argument that helps pass parameters that are not in the container:
+
+```PHP
+// DateTime constructor's prototype
+// public __construct ([ string $time = "now" [, DateTimeZone $timezone = NULL ]] )
+
+$this->di->make('DateTime', ['time' => $date])
+```
+
 ### makes
 
 Retrieving entity list:
