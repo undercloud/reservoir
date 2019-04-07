@@ -206,9 +206,9 @@ use Reservoir\ServiceProvider;
 
 class DatabaseServiceProvider extends ServiceProvider
 {
-    public function register(Di $di)
+    public function register()
     {
-        $di->singleton('db', function(Di $di) {
+        $this->di->singleton('db', function(Di $di) {
             return new DatabaseConnection(
                 $di->make('host'),
                 $di->make('user'),
@@ -242,7 +242,7 @@ class DatabaseServiceProvider extends ServiceProvider
         return ['db'];
     }
 
-    public function register(Di $di)
+    public function register()
     {
         ...
     }

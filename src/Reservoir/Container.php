@@ -318,7 +318,7 @@ abstract class Container
      */
     private function invokeRegister(ServiceProvider $instance)
     {
-        call_user_func([$instance, 'register'], $this);
+        call_user_func([$instance, 'register']);
     }
 
     /**
@@ -331,7 +331,7 @@ abstract class Container
     public function register($serviceProvider)
     {
         /** @var ServiceProvider */
-        $providerInstance = new $serviceProvider();
+        $providerInstance = new $serviceProvider($this);
 
         if ($providerInstance->deferred) {
             $this->defer($serviceProvider, $providerInstance, $providerInstance->provides());

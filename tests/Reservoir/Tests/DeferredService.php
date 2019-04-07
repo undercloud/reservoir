@@ -8,9 +8,9 @@ class DeferredService extends Reservoir\ServiceProvider
         return ['xbaz'];
     }
 
-    public function register(Reservoir\Di $di)
+    public function register()
     {
-        $di->bind('xbaz', function($di){
+        $this->di->bind('xbaz', function($di){
             return $di->make('Baz');
         });
     }

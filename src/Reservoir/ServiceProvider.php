@@ -27,12 +27,18 @@ abstract class ServiceProvider
         return [];
     }
 
+    /*
+     * @param Di $container instance
+     */
+    public function __construct(Di $di)
+    {
+        $this->di = $di;
+    }
+
     /**
      * Register service provider
      *
-     * @param Di $container instance
-     *
      * @return null
      */
-    abstract public function register(Di $container);
+    abstract public function register();
 }
