@@ -287,4 +287,10 @@ class ReservoirTest extends ReservoirSetup
         $this->di->make('foo');
         $this->di->make('bar');
     }
+
+    public function testDefaults()
+    {
+        $this->assertEquals(100,$this->di->make('Foo::defaults'));
+        $this->assertEquals(50,$this->di->make('Foo::defaults',['a' => 50]));
+    }
 }
