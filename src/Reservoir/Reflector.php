@@ -44,6 +44,11 @@ class Reflector
      */
     private function buildContext(ReflectionParameter $parameter)
     {
+        if (method_exists($parameter, 'getType')) {
+            var_dump($parameter->getType());
+            var_dump($parameter->getType()->getName());
+        }
+        
         $parameterClass = $parameter->getClass();
         if ($parameterClass) {
             $abstract = $parameterClass->getName();
