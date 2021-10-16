@@ -51,7 +51,7 @@ class Reflector
             } elseif($reflectionType) {
                 $abstract = $reflectionType->getName();
             } else {
-                var_dump($parameter);
+                $abstract = '$' . $parameter->getName();
             }
         } elseif (method_exists($parameter, 'getClass') and $parameterClass = $parameter->getClass()) {
             $abstract = $parameterClass->getName();
