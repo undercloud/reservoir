@@ -233,9 +233,9 @@ class Reflector
     {
         try {
             list($instance, $method) = $this->normalizeCallable($key);
-
+            var_dump($instance, $method);
             $instance = $this->normalizeInstance($instance, $additional);
-
+            var_dump($instance);
             if ($instance and $method) {
                 $reflection = new ReflectionMethod($instance, $method);
                 $class = get_class($instance);
