@@ -190,7 +190,9 @@ class ReservoirTest extends ReservoirSetup
         $this->di->when('DateTime')
                  ->needs('$time')
                  ->give($date);
-
+        
+        $this->di->when('DateTimeZone')->needs('$timezone')->give('UTC');
+        
         $this->assertEquals($ts, $this->di->make('DateTime')->getTimestamp());
         $this->assertEquals($date, $this->di->make('DateTime')->format('Y-m-d'));
 
