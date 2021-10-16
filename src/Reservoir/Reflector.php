@@ -127,9 +127,11 @@ class Reflector
                         if ($parameter->isDefaultValueAvailable()) {
                             $callParams[] = $parameter->getDefaultValue();
                         }
-                    } else {
+                    } elseif($reflectionType) {
                         $classname = $reflectionType->getName();
                         $callParams[] = $this->container->make($classname);
+                    } elseif ($parameter->isDefaultValueAvailable()) {
+                        $callParams[] = $parameter->getDefaultValue();
                     }
                 } elseif (method_exists($parameter, 'getClass') and $parameter->getClass()) {
                     $classname = $parameter->getClass()->getName();
