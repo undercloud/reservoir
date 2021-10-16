@@ -49,10 +49,8 @@ class Reflector
             if ($reflectionType and $reflectionType->isBuiltin()) {
                 $abstract = '$' . $parameter->getName();
             } else {
-                $abstract = $parameter->getName();
+                $abstract = $reflectionType->getName();
             }
-            
-            var_dump($reflectionType,$abstract);
         } elseif (method_exists($parameter, 'getClass') and $parameterClass = $parameter->getClass()) {
             $abstract = $parameterClass->getName();
         } else {
@@ -128,7 +126,7 @@ class Reflector
                             $callParams[] = $parameter->getDefaultValue();
                         }
                     } else {
-                        $classname = $parameter->getName();
+                        $classname = $reflectionType->getName();
                         $callParams[] = $this->container->make($classname);
                     }
                 } elseif (method_exists($parameter, 'getClass') and $parameter->getClass()) {
