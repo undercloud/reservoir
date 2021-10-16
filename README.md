@@ -1,5 +1,5 @@
 # Reservoir
-[![Build Status](https://travis-ci.org/undercloud/reservoir.svg?branch=master)](https://travis-ci.org/undercloud/reservoir)
+[![Build Status](https://travis-ci.com/undercloud/reservoir.svg?branch=master)](https://travis-ci.com/undercloud/reservoir)
 
 Inspired by [Laravel's Service Container](https://laravel.com/docs/master/container)
 
