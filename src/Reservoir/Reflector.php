@@ -129,7 +129,7 @@ class Reflector
                         $classname = $parameter->getName();
                         $callParams[] = $this->container->make($classname);
                     }
-                } elseif (method_exists($parameter, 'getClass') and $parameter->getClass() and !method_exists($parameter, 'getType')) {
+                } elseif (method_exists($parameter, 'getClass') and $parameter->getClass()) {
                     $classname = $parameter->getClass()->getName();
                     $callParams[] = $this->container->make($classname);
                 } else {
