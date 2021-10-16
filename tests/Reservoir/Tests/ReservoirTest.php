@@ -225,7 +225,9 @@ class ReservoirTest extends ReservoirSetup
         date_default_timezone_set('UTC');
         $date = '2007-05-25';
         $ts   = 1180051200;
-
+        
+        $this->di->when('DateTimeZone')->needs('$timezone')->give('UTC');
+        
         $dateTime = $this->di->make('DateTime', ['time' => $date]);
 
         $this->assertEquals($ts, $dateTime->getTimestamp());
