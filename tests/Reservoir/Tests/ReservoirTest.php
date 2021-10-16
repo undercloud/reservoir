@@ -65,6 +65,8 @@ class ReservoirTest extends ReservoirSetup
 
         $this->di->singleton('dt','DateTime');
 
+        $this->di->when('DateTime')->needs('$timezone')->give(null);
+        
         $this->assertEquals(
             $this->di->make('dt'),
             $this->di->make('dt')
