@@ -226,8 +226,12 @@ class ReservoirTest extends ReservoirSetup
         
         $this->di->when('DateTimeZone')->needs('$timezone')->give('UTC');
         
-        $dateTime = $this->di->make('DateTime', ['time' => $date]);
-
+        if (version_compare(PHP_VERSION, '8.0.0') >= 0) {
+            $dateTime = $this->di->make('DateTime', ['datetime' => $date]);
+        } else {
+            $dateTime = $this->di->make('DateTime', ['time' => $date]);
+        }
+        
         $this->assertEquals($ts, $dateTime->getTimestamp());
         $this->assertEquals($date, $dateTime->format('Y-m-d'));
 
