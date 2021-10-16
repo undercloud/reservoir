@@ -217,6 +217,7 @@ class ReservoirTest extends ReservoirSetup
 
     public function testAdditional()
     {
+        date_default_timezone_set('UTC');
         $date = '2007-05-25';
         $ts   = 1180051200;
 
