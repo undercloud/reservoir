@@ -44,15 +44,15 @@ class Reflector
      */
     private function buildContext(ReflectionParameter $parameter)
     {
-        if (method_exists($parameter, 'getType')) {
+        if (method_exists($parameter, 'getClass') and $parameterClass = $parameter->getClass()) {
+            $abstract = $parameterClass->getName();
+        } elseif (method_exists($parameter, 'getType')) {
             $reflectionType = $parameter->getType();
             if ($reflectionType and $reflectionType->isBuiltin()) {
                 $abstract = '$' . $parameter->getName();
             } else {
                 $abstract = $parameter->getName();
             }
-        } elseif ($parameterClass = $parameter->getClass()) {
-            $abstract = $parameterClass->getName();
         } else {
             $abstract = '$' . $parameter->getName();
         }
@@ -120,6 +120,9 @@ class Reflector
                         true
                     );
                     
+                } elseif (method_exists($parameter, 'getClass') and $parameter->getClass()) {
+                    $classname = $parameter->getClass()->getName();
+                    $callParams[] = $this->container->make($classname);
                 } elseif (method_exists($parameter, 'getType')) {
                     $reflectionType = $parameter->getType();
                     if ($reflectionType and $reflectionType->isBuiltin()) {
@@ -130,9 +133,6 @@ class Reflector
                         $classname = $parameter->getName();
                         $callParams[] = $this->container->make($classname);
                     }
-                } elseif ($parameter->getClass()) {
-                    $classname = $parameter->getClass()->getName();
-                    $callParams[] = $this->container->make($classname);
                 } else {
                     if ($parameter->isDefaultValueAvailable()) {
                         $callParams[] = $parameter->getDefaultValue();
