@@ -44,7 +44,7 @@ class Reflector
      */
     private function buildContext(ReflectionParameter $parameter)
     {
-        if (method_exists($parameter, 'getClass') and $parameterClass = $parameter->getClass()) {
+        if (method_exists($parameter, 'getClass') and $parameterClass = $parameter->getClass() and !method_exists($parameter, 'getType')) {
             $abstract = $parameterClass->getName();
         } elseif (method_exists($parameter, 'getType')) {
             $reflectionType = $parameter->getType();
@@ -120,7 +120,7 @@ class Reflector
                         true
                     );
                     
-                } elseif (method_exists($parameter, 'getClass') and $parameter->getClass()) {
+                } elseif (method_exists($parameter, 'getClass') and $parameter->getClass() and !method_exists($parameter, 'getType')) {
                     $classname = $parameter->getClass()->getName();
                     $callParams[] = $this->container->make($classname);
                 } elseif (method_exists($parameter, 'getType')) {
