@@ -48,8 +48,10 @@ class Reflector
             $reflectionType = $parameter->getType();
             if ($reflectionType and $reflectionType->isBuiltin()) {
                 $abstract = '$' . $parameter->getName();
-            } else {var_dump($reflectionType);
+            } elseif($reflectionType) {
                 $abstract = $reflectionType->getName();
+            } else {
+                var_dump($parameter);
             }
         } elseif (method_exists($parameter, 'getClass') and $parameterClass = $parameter->getClass()) {
             $abstract = $parameterClass->getName();
