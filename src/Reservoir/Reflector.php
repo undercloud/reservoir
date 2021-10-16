@@ -44,15 +44,15 @@ class Reflector
      */
     private function buildContext(ReflectionParameter $parameter)
     {
-        if (method_exists($parameter, 'getClass') and $parameterClass = $parameter->getClass() and !method_exists($parameter, 'getType')) {
-            $abstract = $parameterClass->getName();
-        } elseif (method_exists($parameter, 'getType')) {
+        if (version_compare(PHP_VERSION, '8.0.0') >= 0) {
             $reflectionType = $parameter->getType();
             if ($reflectionType and $reflectionType->isBuiltin()) {
                 $abstract = '$' . $parameter->getName();
             } else {
                 $abstract = $parameter->getName();
             }
+        } elseif (method_exists($parameter, 'getClass') and $parameterClass = $parameter->getClass()) {
+            $abstract = $parameterClass->getName();
         } else {
             $abstract = '$' . $parameter->getName();
         }
@@ -119,11 +119,7 @@ class Reflector
                         [],
                         true
                     );
-                    
-                } elseif (method_exists($parameter, 'getClass') and $parameter->getClass() and !method_exists($parameter, 'getType')) {
-                    $classname = $parameter->getClass()->getName();
-                    $callParams[] = $this->container->make($classname);
-                } elseif (method_exists($parameter, 'getType')) {
+                } elseif (version_compare(PHP_VERSION, '8.0.0') >= 0) {
                     $reflectionType = $parameter->getType();
                     if ($reflectionType and $reflectionType->isBuiltin()) {
                         if ($parameter->isDefaultValueAvailable()) {
@@ -133,6 +129,9 @@ class Reflector
                         $classname = $parameter->getName();
                         $callParams[] = $this->container->make($classname);
                     }
+                } elseif (method_exists($parameter, 'getClass') and $parameter->getClass() and !method_exists($parameter, 'getType')) {
+                    $classname = $parameter->getClass()->getName();
+                    $callParams[] = $this->container->make($classname);
                 } else {
                     if ($parameter->isDefaultValueAvailable()) {
                         $callParams[] = $parameter->getDefaultValue();
@@ -233,9 +232,9 @@ class Reflector
     {
         try {
             list($instance, $method) = $this->normalizeCallable($key);
-            var_dump($instance, $method);
+
             $instance = $this->normalizeInstance($instance, $additional);
-            var_dump($instance);
+
             if ($instance and $method) {
                 $reflection = new ReflectionMethod($instance, $method);
                 $class = get_class($instance);
